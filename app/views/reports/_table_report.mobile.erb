@@ -1,0 +1,50 @@
+
+<% if @readings.any? %>
+
+  <% grid_class, block_class = calculate_grid_classes %>
+
+  <ul id='events' data-role='listview' data-inset='true' class='events-list'>
+
+    <li>
+      <div id='table-header' class="<%= grid_class %>">
+        <div class="<%= block_class %>">Location</div>
+        <div class="<%= block_class %>">Speed (mph)</div>
+        <div class="<%= block_class %>">Event Type</div>
+        <div class="<%= block_class %>">When</div>
+      </div>
+    </li>
+
+    <% previous_datetime = nil %>
+
+    <% @readings.each do |reading| %>
+      <li class="event">
+        <div class="<%= grid_class %>">
+
+          <div class="<%= block_class %>">
+            <%= standard_location(@device, reading, true) %>
+          </div>
+
+          <div class="<%= block_class %>"><%= reading.speed %></div>
+
+          <div class="<%= block_class %>"><%= render partial: 'event_display', locals: {reading: reading} %></div>
+
+          <div class="<%= block_class %>">
+            <%= standard_date_and_time(reading.recorded_at,previous_datetime) %>
+            <% previous_datetime = reading.recorded_at %>
+          </div>
+
+        </div>
+      </li>
+    <% end %>
+
+   </ul>
+
+<% else %>
+
+  <div class="alert">
+    <span>No readings found.</span>
+  </div>
+
+<% end %>
+
+<%= render partial: '/shared/load_rgeo', locals: { frm_index: false, show_direction: true, show_phone_number: false } %>

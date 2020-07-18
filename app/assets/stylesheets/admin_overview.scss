@@ -1,0 +1,137 @@
+@import "colors";
+@import "constants";
+@import "media_queries_breakpoints";
+
+.admin-overview {
+  width: 95%;
+  margin-top: $base-spacing-unit;
+  margin-bottom: 60px;
+
+  &__title {
+    margin-bottom: $base-spacing-unit;
+  }
+
+  &__summary {
+    display: flex;
+    margin-bottom: $base-spacing-unit;
+  }
+
+  &__login-message-header {
+    margin-bottom: $base-spacing-unit;
+  }
+}
+
+.admin-overview-box {
+  display: flex;
+  margin-bottom: $base-spacing-unit;
+
+  &:first-child {
+    margin-left: 0;
+  }
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+  &__content {
+    background-color: $color-pearl;
+    padding: ($base-spacing-unit * 2) ($base-spacing-unit * 4);
+    box-sizing: border-box;
+    margin-right: $base-spacing-unit / 2;
+    text-align: center;
+    line-height: 26px;
+    border-radius: 4px;
+    color: $color-tundora-gray;
+
+    @media #{$tablets-portrait} {
+      padding: $base-spacing-unit ($base-spacing-unit * 2);
+    }
+
+    & > a {
+      display: block;
+      text-decoration: none;
+    }
+  }
+
+  &__title {
+    font-size: 22px;
+    color: $color-tundora-gray;
+    font-family: Roboto;
+    font-weight: 300;
+  }
+
+  &__value {
+    font-size: 48px;
+    color: $color-tundora-gray;
+    font-family: Roboto;
+    font-weight: 300;
+    margin-top: $base-spacing-unit * 2;
+  }
+
+  &__action {
+    margin-top: $base-spacing-unit * 2;
+
+    & > a {
+      width: 120px;
+      margin: 0 auto;
+    }
+  }
+}
+
+.login-message {
+  font-family: Roboto;
+  font-weight: 300;
+  font-size: 14px;
+  margin-left: $base-spacing-unit / 2;
+  display: inline-block;
+
+  &__status-active {
+    color: $color-asparagus-green;
+  }
+
+  &__status-inactive {
+    color: $color-red-berry;
+  }
+
+  &__last-edited {
+    font-family: Roboto;
+    font-weight: 300;
+    font-size: 12px;
+    display: inline;
+    margin-right: $base-spacing-unit;
+    padding-top: $base-spacing-unit / 2;
+  }
+
+  &-preview {
+    padding: 10px 40px;
+    background-color: $color-pearl;
+    border-radius: 4px;
+    margin-bottom: $base-spacing-unit / 2;
+
+    &__static-text {
+      width: auto !important;
+    }
+
+    &__text {
+      display: block;
+      margin: $base-spacing-unit 0;
+      background-color: $color-white;
+      resize: none;
+      height: 200px;
+      border: none;
+      border-radius: 4px;
+      width: 100%;
+      padding: 5px;
+      font-family: Roboto;
+      font-size: 14px;
+      font-weight: 300;
+      box-sizing: border-box;
+    }
+
+    &__help {
+      text-decoration: none;
+      display: inline-block;
+      padding-top: 10px;
+    }
+  }
+}

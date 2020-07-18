@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+  <head>
+    <%= render partial: '/layouts/head', :locals => {:include_maps_js => true} %>
+    <%= csrf_meta_tag %>
+  </head>
+
+  <body>
+    <div id='page' data-role="page" data-theme="e">
+
+      <div data-role='navbar' data-theme='e'>
+        <%= yield :navbar %>
+      </div>
+
+      <div id='content' data-role='content' data-theme='e'>
+        <%= render partial:"/layouts/flash_message" %>
+        <%= yield %>
+      </div>
+
+      <%= render partial: '/layouts/javascript_footer' %>
+    </div>
+  </body>
+
+</html>
+
+
+

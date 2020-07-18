@@ -1,0 +1,44 @@
+<%= render partial:"/layouts/flash_message" %>    
+
+<h3>Submit a location request for <%= @device.name %></h3>
+
+<form method="post" class="form_table">
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+  <table>
+    <tr>
+      <td>
+		<% if @device.last_reading.nil? %>
+		  This device has not yet reported its location.
+      	<% elsif @device.last_gps_reading.nil? %>
+		  <span color="red">This device reported that it cannot determine its location <%= time_ago_in_words(@device.last_reading.recorded_at) %> ago.</span>
+		<% else %>
+		  This device last reported its location <%= time_ago_in_words(@device.last_gps_reading.recorded_at) %> ago.
+		  <% if @device.last_reading.recorded_at > @device.last_gps_reading.recorded_at %>
+			<span color="red">However, this device reported that it cannot determine its location <%= time_ago_in_words(@device.last_reading.recorded_at) %> ago.</span>
+		  <% end %>
+		<% end%>
+	  </td>
+    <tr>
+      <td>
+      	<% if !@device.request_location? %>
+		  This device does not support requesting its location.
+      	<% elsif (last_request = @device.last_location_request) %>
+		  The location of this device was last requested <%= time_ago_in_words(last_request.start_date_time) %> ago with a status of '<%= last_request.friendly_status %>'.
+		<% else %>
+		  The location of this device has never been requested.
+		<% end%>
+	  </td>
+    </tr>
+    <%# only show the button if requesting location is supported %>
+    <% if @device.request_location? %>
+        <tr>
+          <td align="right">
+            <input type="submit" value="Find It Now" />&nbsp;&nbsp;
+            <a href="<%= @original_referral_url %>" >cancel</a>
+            <input type="hidden" name="original_referral_url" value="<%= @original_referral_url %>"/>
+          </td>
+        </tr>
+    <% end %>
+  </table>
+  <input type="hidden" name="id" value="<%= @device.id %>" />
+</form>

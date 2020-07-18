@@ -1,0 +1,49 @@
+<% content_for :header do %>
+   <%= image_tag '/images/gotrackez-logo.png', id: 'logo' %>
+  <h1>GoTrackEZ</h1>
+<% end %>
+
+<%= form_for(:user, url: new_user_session_path(format: :mobile), html: {'data-ajax' => 'false', method: :post, id: 'login-form'}) do |f| %>
+  <%= hidden_field_tag :format, :mobile %>
+
+  <p><%= f.label :email, 'Username' %></p>
+  <p><%= f.text_field :email %></p>
+
+  <p><%= f.label :password %></p>
+  <p><%= f.password_field :password %></p>
+
+  <p><%= f.submit 'Sign in' %></p>
+  <p id="remember-me">
+    <%= f.check_box :remember_me %>
+    <%= f.label :remember_me, 'Remember Me' %>
+  </p>
+<% end %>
+
+<%= link_to 'Forgot Password?', new_user_password_path(:mobile),
+                                'data-role' => 'button',
+                                'data-ajax' => 'false' %>
+
+<%= link_to 'View Desktop Site', set_ui_version_path(view_full_website: 'true'),
+                          'data-role' => 'button',
+                          'data-ajax' => 'false' %>
+
+<%= link_to 'Get Started', 'https://www.gotrack.com/help.php?section=contactus&mode=update',
+                           'data-role' => 'button',
+                           'data-ajax' => 'false',
+                           id: 'get_started' %>
+
+<% content_for :javascript_include do %>
+  <%= javascript_tag do %>
+
+     <!-- load map by javascript -->
+     $('#page').on('pageshow', function(){
+
+       // window height - all_other_stuff - button_height
+       // or 350px min-eight
+       var margin = Math.max(0, window.innerHeight - 421 + 34);
+       $('a#get_started').css('margin-top', margin);
+
+     });
+
+  <% end %>
+<% end %>

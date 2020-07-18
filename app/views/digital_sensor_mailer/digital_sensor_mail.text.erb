@@ -1,0 +1,6 @@
+<%= "Dear #{@user.full_name}" %>,
+<%- name = @sensor_reading.reading.device_name %>
+<%- sensor_name = @sensor_reading.digital_sensor_name %>
+<%- sensor_state = @sensor_reading.sensor_state %>
+<%- recorded_at = @sensor_reading.recorded_at %>
+<%= "The device #{name} has changed the state of #{sensor_name} to #{sensor_state} at #{recorded_at.in_time_zone(@user.time_zone)}" %>

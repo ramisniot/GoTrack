@@ -1,0 +1,6 @@
+message:
+  id: 1
+  message: "**Hello, world.**"
+  is_active: true
+  created_at: <%= Time.now.to_s :db %>
+  updated_at: <%= Time.now.to_s :db %>

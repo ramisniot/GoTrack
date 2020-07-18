@@ -1,0 +1,63 @@
+<%= render partial: 'report_header' %>
+
+  <table class="panel_table">
+    <tr>
+      <th>When</th>
+	  <th>Event</th>
+	  <th>Ignition</th>
+	  <th>Speed</th>
+	  <th style="width:20px">Trip?</th>
+	  <th style="width:20px">Stop?</th>
+	  <th style="width:20px">Idle?</th>
+    </tr>
+
+	<% trip_end_at,idle_end_at,stop_end_at,trip_suspect,idle_suspect,stop_suspect = nil,nil,nil,nil,nil,nil,nil %>
+	<% @readings.each do |reading| %>
+	  <tr class="<%= cycle('dark-row', 'light-row') %>" id="row<%= reading.id %>">
+		<td><%= standard_date_and_time(reading.recorded_at) %></td>
+		<td><%= reading.show_event_type.titleize %></td>
+		<td><%= reading.ignition ? 'Y' : reading.ignition.nil? ? '?' : 'N' %>
+		<td><%= reading.speed %></td>
+		<% if reading.trip_start_id %>
+			<td style="background-color:<%= (trip_suspect = reading.trip_suspect == true && reading.trip_stop_id.nil?) ? '#CC0000' : '#00CC00' %>">
+				<a href="/reports/trip_detail/<%= reading.trip_start_id %>">BEGIN</a>
+				<% if reading.trip_stop_id %><a href="/reports/trip_detail/<%= reading.trip_start_id %>">END</a><% end %>
+			</td>
+			<% trip_end_at = reading.trip_duration ? reading.recorded_at.advance(:minutes => reading.trip_duration.to_i) : trip_suspect ? nil : Time.now %>
+		<% elsif reading.trip_stop_id %>
+			<td style="background-color:<%= trip_suspect ? '#CC0000' : '#00CC00' %>"><a href="/reports/trip_detail/<%= reading.trip_stop_id %>">END</a></td>
+			<% trip_end_at = nil%>
+		<% elsif trip_end_at and ((trip_end_at - reading.recorded_at + 30) / 60).round >= 0 %>
+			<td style="background-color:<%= trip_suspect ? '#CC0000' : '#00CC00' %>">&nbsp;</td>
+		<% else%>
+			<% trip_end_at = nil%>
+			<td>&nbsp;</td>
+		<% end %>
+		<% if reading.stop_id %>
+			<td style="background-color:<%= (stop_suspect = reading.stop_suspect == true) ? '#CC0000' : '#00CC00' %>">S:<%= reading.stop_duration %></td>
+			<% stop_end_at = reading.stop_duration ? reading.recorded_at.advance(:minutes => reading.stop_duration.to_i) : stop_suspect ? nil : Time.now %>
+		<% elsif stop_end_at and ((stop_end_at - reading.recorded_at + 30) / 60).round >= 0 %>
+			<td style="background-color:<%= stop_suspect ? '#CC0000' : '#00CC00' %>">&nbsp;</td>
+		<% else%>
+			<% stop_end_at = nil%>
+			<td>&nbsp;</td>
+		<% end %>
+		<% if reading.idle_id %>
+			<td style="background-color:<%= (idle_suspect = reading.idle_suspect == true) ? '#CC0000' : '#00CC00' %>">I:<%= reading.idle_duration %></td>
+			<% idle_end_at = reading.idle_duration ? reading.recorded_at.advance(:minutes => reading.idle_duration.to_i) : idle_suspect ? nil : Time.now %>
+		<% elsif idle_end_at and ((idle_end_at - reading.recorded_at + 30) / 60).round >= 0 %>
+			<td style="background-color:<%= idle_suspect ? '#CC0000' : '#00CC00' %>">&nbsp;</td>
+		<% else%>
+			<% idle_end_at = nil%>
+			<td>&nbsp;</td>
+		<% end %>
+	  </tr>
+	<% end %>
+</table>
+  <%if @readings.empty? %>
+    <div class="alert">
+      <span>No readings found.</span>
+    </div>
+  <%end%>
+
+<%= render partial: '/shared/load_rgeo', locals: { frm_index: false, show_direction: false, show_phone_number: false } %>

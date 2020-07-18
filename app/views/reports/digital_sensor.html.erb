@@ -1,0 +1,5 @@
+<%= render partial: 'report_header' %>
+
+<%= render partial: 'table_report', locals: { with_map: true, all: true } %>
+
+<%= render partial: 'report_footer', locals: { entities: @readings } %>

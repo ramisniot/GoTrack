@@ -1,0 +1,35 @@
+<div class="page-title contact__title">Contact Us</div>
+<div class="contact__description">
+  Have a problem or idea for a new feature?  Please fill out the form below and let us know what's on your mind.
+  We take the time to review all feedback and value your input.
+</div>
+<div class="contact__description">
+  <% if current_account && (!current_account.contact_name.blank? || !current_account.contact_phone.blank?) %>
+  <table>
+    <% unless current_account.contact_name.blank? %>
+    <tr>
+      <td><b>Contact Name:</b></td>
+      <td><%= current_account.contact_name %></td>
+    </tr>
+    <% end %>
+    <% unless current_account.contact_phone.blank? %>
+    <tr>
+      <td><b>Phone Number:</b></td>
+      <td><%= current_account.contact_phone %></td>
+    </tr>
+    <% end %>
+  </table>
+    <% end %>
+</div>
+<form
+  method="post"
+  action="<%= thanks_contact_index_path %>"
+  class="contact-form"
+>
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+	<textarea class="contact-form__textarea" rows="5" cols="50" name="feedback" id="feedback"></textarea>
+	<div class="form-row form-row--flex">
+    <div class="form-row form-row--inline form-row--actions">
+      <input class="button button--primary button--large button--inline button--right" type="submit" value="Send" />
+    </div>
+</form>

@@ -1,0 +1,314 @@
+var gmap;
+var map;
+var zoom = 8;
+var icon;
+var geofences = [];
+var currSelectedDeviceId;
+var currSelectedGeofenceId;
+var gf_index;
+var address_modified = false;
+
+var circle_center = [];
+
+var polygonal_drawing_open = false;
+var polypoints_array = [];
+
+var orangeSmallIcon = '<%= image_path('icons/orange_small.png') %>';
+
+function load() {
+	if (true) {
+    var defaultMapCenter = $('#map').data('default-map-center');
+    window.centerLatLng = new google.maps.LatLng(defaultMapCenter.lat, defaultMapCenter.lng);
+
+    gmap = new google.maps.Map($('#map')[0], {
+			zoom: 8,
+			center: centerLatLng,
+			mapTypeId: google.maps.MapTypeId.ROADMAP,
+			mapTypeControl: true,
+		    mapTypeControlOptions: {
+		      mapTypeIds: [google.maps.MapTypeId.HYBRID, google.maps.MapTypeId.ROADMAP]
+		    },
+			scaleControl: true,
+			scaleControlOptions: {
+				position: google.maps.ScaleControlStyle.RIGHT
+			}
+		});
+		var draw_a_geofence_after_initializing_map = false;
+
+		if($('#geofence_latitude').val() == '') {
+			draw_a_geofence_after_initializing_map = false;
+			gmap.setCenter(new google.maps.LatLng(defaultMapCenter.lat, defaultMapCenter.lng));
+			gmap.setZoom(zoom);
+		} else {
+			draw_a_geofence_after_initializing_map = true;
+			centerMap();
+		}
+
+		installFenceEditingListeners();
+		if(draw_a_geofence_after_initializing_map) {
+			drawGeofence();
+                        if (window.centerMarker != undefined)
+                          window.centerMarker.setMap(null);
+                        window.centerMarker = new google.maps.Marker({position: new google.maps.LatLng(circle_center[0], circle_center[1]), map: gmap, icon: orangeSmallIcon});
+		}
+	}
+
+}
+
+function polygonArea(path) {
+	var area = 0;
+	var i = 0;
+	var j = 0;
+
+	var points = path.length;
+	var lats = [];
+	var lngs = [];
+	for (i=0; i<points; i++) {
+		var point = path.getAt(i);
+		lats.push(point.lat());
+		lngs.push(point.lng());
+	}
+
+	for (i=0; i<points; i++) {
+		j++;
+		if (j == points)
+			j = 0;
+		area += (lats[i]+lats[j]) * (lngs[i]-lngs[j]);
+	}
+
+	area = area * 0.5;
+	if(area < 0) //absolute val()
+	 	area = area * -1;
+
+	//4761 is the conversion factor between square degrees of latitude and square miles
+	//0.77225511 is some kind of conversion factor, maybe?  That's what it takes to get the same answer that google maps v2 would give
+	return area * 4761 * 0.77225511;
+}
+
+function installFenceEditingListeners() {
+	google.maps.event.clearListeners(gmap, 'click');
+
+	//polygonal listener
+	if($('#geofence_shape_type_1').is(':checked')) {
+		google.maps.event.addDomListener(gmap, "click", function(mouseevent) {
+			polygonal_drawing_open = true;
+			polypoints_array.push([mouseevent.latLng.lat(), mouseevent.latLng.lng()]);
+			drawGeofence();
+		});
+	}
+	//circular listener
+	else {
+		google.maps.event.addDomListener(gmap, "click", function(mouseevent) {
+			circle_center = [mouseevent.latLng.lat(), mouseevent.latLng.lng()];
+			$('#geofence_latitude').val(circle_center[0]);
+			$('#geofence_longitude').val(circle_center[1]);
+			$('#geofence_address').val(circle_center.join(','));
+			address_modified = false;
+			drawGeofence();
+			centerMap();
+		});
+	}
+}
+
+function clearPoints() {
+	polygonal_drawing_open = true;
+	$('#geofence_polypoint_string').val('');
+	polypoints_array = [];
+
+	if(window.geofenceOverlay != undefined)
+		window.geofenceOverlay.setMap(null);
+	if(window.geofenceMarker != undefined)
+		window.geofenceMarker.setMap(null);
+
+}
+
+function closeShape() {
+	$('#geofence_polypoint_string').val($.map(polypoints_array, function(x){return '[' + x.join(',') + ']'}).join(':'));
+	polygonal_drawing_open = false;
+	polypoints_array.push(polypoints_array[0]);
+	drawGeofence();
+}
+
+// Convert address to lat/lng
+function geocode(addr, submit_when_done) {
+	$('#geofence_latitude').val('');
+	$('#geofence_longitude').val('');
+
+	if (addr == '') {
+		alert("You must enter an address or Latitude, Longitude.");
+		return false;
+	}
+
+	if(addr.match(/^\s*[0-9\.\-]+,\s*[0-9\.\-]+\s*/)) {
+		address_modified = false;
+		window.geocode_button_needs_clicking = false;
+
+		circle_center = addr.split(',').map(function(x){return x.replace(/\s/g,'')});
+		$('#geofence_latitude').val(circle_center[0]);
+		$('#geofence_longitude').val(circle_center[1]);
+		centerMap();
+		drawGeofence();
+
+		if(window.centerMarker != undefined)
+			window.centerMarker.setMap(null);
+		window.centerMarker = new google.maps.Marker({position: new google.maps.LatLng(circle_center[0], circle_center[1]), map: gmap, icon: orangeSmallIcon});
+
+		if(submit_when_done) {
+			$('#geofence_form').submit();
+		}
+		return true;
+	}
+
+	var geocoder = new google.maps.Geocoder();
+	geocoder.geocode({address: addr},function(geocoderResults, geocoderStatus){
+		window.geocoderResults = geocoderResults; window.geocoderStatus = geocoderStatus
+		if (geocoderStatus == 'ZERO_RESULTS' || geocoderStatus != 'OK' || geocoderResults.length == 0) {
+			alert('"' + addr + '" not found.');
+			window.geocode_button_needs_clicking = true;
+		} else {
+			window.results = geocoderResults;
+			if (window.results.length > 1) {
+				window.geocode_button_needs_clicking = true;
+				alert("Too many matching addresses were found.  Please be more specific.");
+			} else {
+				address_modified = false;
+				window.geocode_button_needs_clicking = false;
+
+				circle_center = [window.results[0].geometry.location.lat(), window.results[0].geometry.location.lng()];
+				$('#geofence_latitude').val(circle_center[0]);
+				$('#geofence_longitude').val(circle_center[1]);
+
+				if(window.centerMarker != undefined)
+					window.centerMarker.setMap(null);
+				window.centerMarker = new google.maps.Marker({ position: new google.maps.LatLng(circle_center[0], circle_center[1]), map: gmap, icon: orangeSmallIcon });
+
+				centerMap();
+				drawGeofence();
+				if(submit_when_done) {
+					$('#geofence_form').submit();
+				}
+			}
+		}
+
+	});
+}
+
+function setZoomFromRadius() {
+	var r = $('#geofence_radius').val();
+	if(parseInt(r) > 25) {
+		  return 3;
+	} else if(parseInt(r) > 5) {
+		  return 7;
+	} else if(parseInt(r) >= 1) {
+		  return 10;
+	} else {
+		  return 15;
+	}
+}
+
+function centerMap() {
+	if($('#geofence_latitude').val() != '' && $('#geofence_longitude').val() != '') {
+		circle_center = [$('#geofence_latitude').val() * 1, $('#geofence_longitude').val() * 1];
+		gmap.setCenter(new google.maps.LatLng(circle_center[0], circle_center[1]));
+		gmap.setZoom(setZoomFromRadius());
+	}
+}
+
+function markerAt(lat, lng) {
+	return new google.maps.Marker({position: new google.maps.LatLng(lat, lng), map: gmap, icon: '<%= image_path("icons/ublip_marker.png") %>'});
+}
+
+// Draw geofence
+function drawGeofence() {
+	if(window.geofenceOverlay != undefined)
+		window.geofenceOverlay.setMap(null);
+	if(window.geofenceMarker != undefined)
+		window.geofenceMarker.setMap(null);
+
+	if($('#geofence_shape_type_1').is(':checked')) {
+		if(polypoints_array.length == 0){return false;}
+		if(polypoints_array.length == 1) {
+			window.geofenceMarker = markerAt(polypoints_array[0][0], polypoints_array[0][1]);
+		} else {
+			var color = $('#geofence_color').val();
+			var stroke_weight = 3;
+			if(polygonal_drawing_open) {
+				window.geofenceMarker = markerAt(polypoints_array[0][0], polypoints_array[0][1]);
+				if(polypoints_array.length > 2) {
+					google.maps.event.addDomListener(window.geofenceMarker, 'click', function() {
+						closeShape();
+					});
+				}
+				window.geofenceOverlay = new google.maps.Polyline({map: gmap, path: $.map(polypoints_array, function(x){return new google.maps.LatLng(x[0], x[1])}), strokeColor: color, strokeWeight: stroke_weight, strokeOpacity: 0.8});
+			} else {
+				if((polypoints_array[0][0] != polypoints_array[polypoints_array.length-1][0]) || (polypoints_array[0][1] != polypoints_array[polypoints_array.length-1][1])) {
+					polypoints_array.push(polypoints_array[0]);
+				}
+				window.geofenceOverlay = new google.maps.Polygon({map: gmap, path: $.map(polypoints_array, function(x){return new google.maps.LatLng(x[0], x[1])}), strokeColor: color, strokeWeight: stroke_weight, strokeOpacity: 0.75, fillColor: color, fillOpacity: 0.10});
+				if($('#geofence_area')) {
+					$('#geofence_area').val(polygonArea(window.geofenceOverlay.getPath()));
+				}
+			}
+		}
+	} else {
+		var color = $('#geofence_color').val();
+		var radius = $('#geofence_radius').val() * 1609.344;
+		var stroke_weight = 3;
+		var stroke_alpha = 0.75;
+		var shading_alpha = 0.10;
+
+		if(window.centerMarker != undefined)
+			window.centerMarker.setMap(null);
+		window.centerMarker = new google.maps.Marker({position: new google.maps.LatLng(circle_center[0], circle_center[1]), map: gmap, icon: orangeSmallIcon });
+
+		window.geofenceOverlay = new google.maps.Circle({map: gmap, center: new google.maps.LatLng(circle_center[0], circle_center[1]), radius: radius, strokeColor: color, strokeWeight: stroke_weight, strokeOpactiy: stroke_alpha, fillColor: color, fillOpacity: shading_alpha});
+	}
+}
+
+// Validation for geofence creation form
+function validate(geocoded) {
+	if($('#geofence_name').val() == '') {
+		alert('Please specify a name for your geofence');
+		$('#geofence_name').focus();
+		return false;
+	}
+	if($('#geofence_shape_type_1').is(':checked')) {
+		if(polygonal_drawing_open) {
+			alert("Please close the currently open shape by clicking on the marker for the first coordinate");
+			return false;
+		}
+		if(polypoints_array.length == 0) {
+			alert("Please draw a shape before saving this geofence.");
+			return false;
+		}
+	}
+	if($('#geofence_address').val() == '' || $('#geofence_address').val() == 'Street Address OR Latitude, Longitude') {
+		alert("You must enter an address or Latitude, Longitude.");
+		return false;
+	}
+
+	if(window.geocode_button_needs_clicking || (address_modified && ($('#geofence_longitude').val() == '' || $('#geofence_latitude').val() == ''))) {
+		alert('Please click "Zoom Map to Address" and verify location before saving');
+		return false;
+	}
+	return true;
+}
+
+
+function switchTo(kind) {
+	installFenceEditingListeners();
+
+	if(window.geofenceOverlay != undefined)
+		window.geofenceOverlay.setMap(null);
+	if(window.geofenceMarker != undefined)
+		window.geofenceMarker.setMap(null);
+
+	$('#geofence_polypoint_string').val('');
+	if(kind=='circular') {
+		$('.polygonal_fields').hide();
+		$('.circular_fields').show();
+	} else {
+		$('.polygonal_fields').show();
+		$('.circular_fields').hide();
+	}
+}

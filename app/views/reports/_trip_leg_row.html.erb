@@ -1,0 +1,12 @@
+<tr class="<%= cycle('dark-row', 'light-row') %>" id="row<%= leg.trip_event.id %>_<%= leg.id %>">
+  <td><%= link_to 'Detail', { action: 'leg_detail', id: leg.id } %></td>
+  <td nowrap><%= standard_date(leg.reading_start.recorded_at, last_leg_start) %></td>
+  <td nowrap><%= standard_time(leg.reading_start.recorded_at) %></td>
+  <td><%= standard_location(leg.trip_event.device, leg.reading_start) %></td>
+  <td><%= standard_duration(leg.duration) if leg.duration %></td>
+  <td><%= sprintf('%2.1f', leg.distance) if leg.distance %></td>
+  <td><%= leg.reading_stop ? standard_location(leg.trip_event.device, leg.reading_stop) : 'In Progress' %></td>
+  <td nowrap><%= standard_time(leg.reading_stop.recorded_at) if leg.reading_stop %></td>
+  <td><%= standard_duration(leg.idle / 60) if leg.idle %></td>
+  <td><%= (stop_duration = leg.stop_duration(next_leg_start)) ? standard_duration(stop_duration) : 'In Progress&nbsp;' %></td>
+</tr>

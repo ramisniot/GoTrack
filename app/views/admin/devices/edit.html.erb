@@ -1,0 +1,11 @@
+<div class="page-header">
+  <div class="page-header__title-container">
+    <div class="page-title">Editing Device</div>
+  </div>
+</div>
+
+<%= render partial: '/layouts/flash_message' %>
+
+<%= form_for(@device, url: admin_device_path, html: { class: 'form', id: 'device-form', data: { id: @device.id, url: '/admin/devices/digital_sensor_form' } }) do %>
+  <%= render partial: 'device_form' %>
+<% end %>

@@ -1,0 +1,670 @@
+var gmap;
+var prevSelectedRow;
+var prevSelectedRowClass;
+var currSelectedDeviceId;
+var dev_id;
+var device_id;
+var devices = []; // JS devices model
+var readings = []; //JS readings model
+var grp_id;
+var fullScreenMap = false;
+var infowindow;
+var new_drag_point;
+var zoom = 15;
+var rgeo_counter = 0;
+
+function load() {
+  if ($("#map").length > 0) {
+    initializeGoogleMap();
+
+    google.maps.event.addDomListenerOnce(gmap, 'idle', function() {
+      var page = document.location.href.split("/")[3];
+      var action = document.location.href.split("/")[4];
+      if (page.match(/home/) || page == 'admin') {
+        getRecentReadings(true, "from_load");
+      } else if (action == 'trip') {
+        displayTripOverview(); // See reports.js
+      } else if (page == 'reports' || page == 'devices') {
+        getReportBreadcrumbs();
+      } else if (page != 'geofence') {
+        if (device_id != undefined)
+          getBreadcrumbs(device_id);
+      }
+    });
+  }
+}
+
+function openInfoWindowHtml(position, content, page, customOffsetY) {
+  if (window.currentInfoWindow != undefined) {
+    window.currentInfoWindow.close();
+  }
+
+  var offsetY = customOffsetY || -50;
+
+  var myOptions = {
+    position: position,
+    content: content,
+    disableAutoPan: false,
+    maxWidth: 0,
+    pixelOffset: new google.maps.Size(-140, offsetY),
+    zIndex: null,
+    boxClass: 'infobox',
+    infoBoxClearance: new google.maps.Size(1, 1),
+    isHidden: false,
+    pane: "floatPane",
+    enableEventPropagation: false,
+    closeBoxURL: "<%= image_path('infowindow_close.svg') %>",
+    alignBottom: customOffsetY ? false : true
+  };
+
+  var infoWindow = new InfoBox(myOptions);
+  window.currentInfoWindow = infoWindow;
+
+  // Detect when info window is closed
+  google.maps.event.addDomListener(infoWindow, "closeclick", function () {
+    dev_id = false;
+    highlightRow(0);
+    window.activeDeviceId = null;
+  });
+
+  infoWindow.open(gmap);
+}
+
+function updateDeviceAddress(reading) {
+  var device = getDeviceByLastGPSReadingId(reading.id);
+
+  if (device) {
+    device.address = (device.address).replace('Getting Address...', reading.address);
+
+    updateDeviceRow({id: device.id, helper_standard_location: device.address, dt: device.dt});
+  }
+}
+
+function getLastReadingInfo() {
+// Get new reading for geocode
+  setTimeout("lastReadingInfoCall();", 5000);
+}
+
+function lastReadingInfoCall() {
+  $.get('/readings/get_last_reading_info_for_devices.json').done(function (last_gps_readings) {
+
+    for (var x = 0; x < last_gps_readings.length; x++) {
+      var last_gps_reading_json = JSON.parse(last_gps_readings[x]);
+
+      if (typeof getReadingById(last_gps_reading_json.id) == 'undefined') {
+        readings.push(last_gps_reading_json);
+      }
+
+      if (last_gps_reading_json.address != null) {
+        var reading = getReadingById(last_gps_reading_json.id);
+        if (reading) {
+          reading.address = last_gps_reading_json.address;
+          updated_readings.push(reading);
+        }
+
+        if (frm_index) {
+          updateDeviceAddress(last_gps_reading_json);
+        }
+      }
+    }
+
+    load_rgeo_code();
+    showReadings();
+  })
+}
+
+function getRecentReadings(redrawMap, id) {// code cleanup remains
+  $("#updating").show();
+  var bounds = new google.maps.LatLngBounds();
+  var url;
+  var no_data_flag = false;
+
+  if (window.dispatchResult != undefined && window.dispatchResult.length > 0) {
+    bounds.extend(new google.maps.LatLng(window.dispatchResult[0], window.dispatchResult[1]));
+  }
+
+  if (id != "from_load") {  // else part will execute only on page load & For refresh the "if" part gets executed.
+    url = "/readings/recent/" + id + '.json';
+    $.ajax({url: url}).done(function (devices) {
+      if (window.dispatchResult != undefined && window.dispatchResult.length > 0) {
+        drawGeocodingResult(window.dispatchResult[0], window.dispatchResult[1]);
+      }
+
+      for (var i = 0; i < devices.length; i++) {
+        var device = devices[i];
+
+        // Update device attributes for showing into the bubble
+        d = getDeviceById(device['id']);
+        if (!!d) {
+          d.lat = device['latitude'];
+          d.lng = device['longitude'];
+          d.speed = device['speed'];
+          d.dt = device['dt'];
+          d.full_dt = device['full_dt'];
+          d.address = device['helper_standard_location'];
+          d.last_gps_reading_id = device['last_gps_reading_id'];
+          d.direction = device['direction'];
+          d.geofence = device['geofence'];
+        }
+
+        // Legacy names for device attributes;	TODO: replace all of these oddly named things
+        device['status'] = devices[i]['latest_status_html'];
+        device['icon_id'] = devices[i]['icon_id'];
+        device['name'] = devices[i]['name'];
+        device['id'] = devices[i]['id'];
+        device['reading_id'] = devices[i]['last_location_id'];
+        device['lat'] = device['latitude'];
+        device['lng'] = device['longitude'];
+
+        // Populate the table
+        populate_the_table(device, frm_index, bounds);
+      }
+
+      if (devices.length > 0 && window.activeDeviceId != null) {
+        focusOn(window.activeDeviceId);
+      }
+
+      $("#updating").hide();
+      // Call rgeo function for new readings
+      load_rgeo_code();
+    });
+  } else { //This "else" only executes if this is the result of an initial page load
+
+    if (devices[0] != null)
+      no_data_flag = true;
+
+    for (var i = 0; i < devices.length; i++) {
+      // check for the group image
+      var device = devices[i];
+      populate_the_table(device, false, bounds); // Populate the table
+    }
+
+    if (no_data_flag && (redrawMap == undefined || redrawMap == true)) {
+      if (dev_id) {
+        var device = getDeviceById(dev_id);
+        var point = new_drag_point || (new google.maps.LatLng(device.lat, device.lng));
+        centerMap(dev_id); // after refresh the map the info window will close, if you want info window to remain open, please comment out this statment.
+      } else {
+        if (!new_drag_point) {
+          //set a maximum default zoom level algorithmically.  Sure wish there was a maxZoom setting to fitBounds.
+          //fitBounds occurs asynchronously, so we have to have an event listener ready before we execute it in case the user has a fast browser
+          google.maps.event.addListenerOnce(gmap, 'bounds_changed', function (event) {
+            if (this.getZoom() > 18) this.setZoom(18)
+          });
+          gmap.fitBounds(bounds);
+        }
+      }
+    }
+
+    if (window.dispatchResult != undefined && window.dispatchResult.length > 0) {
+      drawGeocodingResult(window.dispatchResult[0], window.dispatchResult[1]);
+    }
+
+    $("#updating").hide();
+  }
+}
+
+function drawGeocodingResult(lat, lon) {
+  var marker = new google.maps.Marker({
+    position: new google.maps.LatLng(lat, lon),
+    map: gmap,
+    icon: '<%= image_path("icons/destination.png") %>',
+    clickable: true
+  });
+
+  google.maps.event.addDomListener(marker, "click", function () {
+    openInfoWindowHtml(new google.maps.LatLng(lat, lon), window.dispatchAddress + '<br /><br />Click <a href="/geofences/new?geofence[radius]=0.1&geofence[latitude]=' + lat + '&geofence[longitude]=' + lon + '&geofence[address]=' + window.dispatchAddress + '">here</a> to save this Location.<br /><br /><a href="#" onclick="maxZoomTo(' + lat + ',' + lon + ')">Zoom In</a>');
+  });
+
+  marker.setMap(gmap);
+}
+
+function updateDeviceRow(device) {
+  var deviceRow = $("#row" + device.id)[0];
+
+  if (deviceRow && deviceRow.getElementsByTagName) {
+    var tds = deviceRow.getElementsByTagName("td");
+
+    tds[1].innerHTML = device.helper_standard_location;
+
+    if (device.status) tds[2].innerHTML = device.status;
+
+    tds[3].innerHTML = device.dt;
+  }
+}
+
+// Populating the left hand side table, and register the device's marker on the gmap
+function populate_the_table(device, frm_index, bounds) {
+  if (frm_index) {
+    updateDeviceRow(device);
+  }
+
+  var point = new google.maps.LatLng(device.lat, device.lng);
+
+  if (window.markers == undefined)
+    window.markers = {};
+
+  if (window.markers[device.id] != undefined) {
+    window.markers[device.id][0].setMap(null);
+    window.markers[device.id][1].setMap(null);
+  }
+
+  var labeledMarker = createLabeledMarker(device.id, point, device.name, marker_image(device.icon_id), createDeviceHtml(device.id));
+  var arrowMarker = createMarker(device.id, point, device.name, createArrow(device.direction, device.speed), createDeviceHtml(device.id));
+
+  window.markers[device.id] = [labeledMarker, arrowMarker];
+  window.markers[device.id][0].setMap(gmap);
+  window.markers[device.id][1].setMap(gmap);
+
+  bounds.extend(point);
+}
+
+// setting the marker image
+function marker_image(icon) {
+  if (icon == null) {
+    return '<%= image_path ("icons/ublip_marker.png") %>';
+  }
+
+  if(icon.toString().length < 3) {
+    switch(icon.toString()) {
+      case '1': return '<%= image_path("icons/ublip_marker.png") %>'; break;
+      case '2': return '<%= image_path("icons/ublip_red.png") %>'; break;
+      case '3': return '<%= image_path("icons/green_small.png") %>'; break;
+      case '4': return '<%= image_path("icons/yellow_small.png") %>'; break;
+      case '5': return '<%= image_path("icons/purple_small.png") %>'; break;
+      case '6': return '<%= image_path("icons/dark_blue_small.png") %>'; break;
+      case '7': return '<%= image_path("icons/grey_small.png") %>'; break;
+      case '8': return '<%= image_path("icons/orange_small.png") %>'; break;
+      default:  return '<%= image_path("icons/ublip_marker.png") %>';
+    }
+  }
+
+  return icon;
+}
+
+// Center map on device and show details
+function centerMap(id) {
+  dev_id = id;
+
+  var device = getDeviceById(id);
+  if (new_drag_point) {
+    var point = new_drag_point;
+  } else if (device) {
+    var point = new google.maps.LatLng(device.lat, device.lng);
+  }
+
+  if (gmap && point) {
+    gmap.setCenter(point);
+  }
+
+  if (device)
+    openInfoWindowHtml(new google.maps.LatLng(device.lat, device.lng), createDeviceHtml(id))
+}
+
+// Get a device object based on id
+function getDeviceById(id) {
+  for (var i = 0; i < devices.length; i++) {
+    var device = devices[i];
+    if (device.id == id)
+      return device;
+  }
+  return null;
+}
+
+function createDeviceHtml(id) {
+  var device = getDeviceById(id);
+
+  if (!!device) {
+    var momentDate = moment(device.full_dt, 'DD-MMM-YYYY hh:mm A');
+    var date = momentDate.format('DD MMM');
+    var year = momentDate.format('YYYY');
+    var time = momentDate.format('hh:mm');
+    var amPm = momentDate.format('a');
+
+    var sidebarHtml = '<div class="tt_container__sidebar">' +
+      '<div class="tt_container__sidebar__date_container">' +
+      '<span class="infobox__date">' + date + '</span><br />' +
+      '<span class="infobox__date">' + year + '</span><br />' +
+      '<span class="infobox__date--bold">' + time + '</span>' +
+      '<span class="infobox__date--small">' + amPm + '</span><br />' +
+      '</div>' +
+      '</div>';
+
+    var lastInfoHtml = '<p class="tt_container__body__name">' +
+      device.name +
+      '</p>' +
+      '<span class="tt_container__body__text-small"> was last seen at </span><br />' +
+      '<span>' +
+      '<div id="bubble_rgeo_' + device.last_gps_reading_id + '" class="tt_container__body__link">' +
+      device.address +
+      '</div>' +
+      '</span>';
+
+    var phoneInfoHtml = '';
+    if (device.phone_number != undefined && device.phone_number != '')
+      phoneInfoHtml += '<br /><span><a href="tel:' + device.phone_number + '">Call ' + device.phone_number + '</span><br />';
+
+    var html = '<div class="tt_container">' +
+      sidebarHtml +
+      '<div class="tt_container__body">' +
+      lastInfoHtml +
+      '<div class="tt_container__body__text">' +
+      speedAndDirectionHtml(device) +
+      geofenceHtml(device) +
+      '</div>' +
+      phoneInfoHtml +
+      deviceActionsHtml(device) +
+      '</div>' +
+      '<div class="clearfix"></div>' +
+      '</div>';
+
+    return html;
+  }
+}
+
+function deviceActionsHtml(device) {
+  var id = device.id;
+
+  var actionsHtml = '<br />' +
+    '<a href="#" class="tt_container__body__link" onclick="maxZoomTo(' + device.lat + ", " + device.lng + ');">Zoom in</a> | ' +
+    '<a href="/reports/all/' + id + '" class="tt_container__body__link">View details</a> | ';
+
+  if (device.has_movement_alert_for_current_user == undefined || !device.has_movement_alert_for_current_user) {
+    actionsHtml += '<span id="ezalert_' + id + '"><a href="#" class="tt_container__body__link" title="Instant next movement alert" onclick="$(\'#ezalert_' + id + '\').load(\'/utils/set_movement_alert/' + id + '?lat=' + device.lat + '&lng=' + device.lng + '\');">EZ-Alert</a><span style=\'visibility: hidden\'> has been set</span></span>';
+  } else {
+    actionsHtml += 'EZ-Alert has been set';
+  }
+
+  return actionsHtml;
+}
+
+function speedAndDirectionHtml(reading) {
+  if (reading.speed != undefined && reading.direction != undefined) {
+    compass_dir = degrees_to_compass(reading.direction, reading.speed).toUpperCase();
+    var displayable_speed = reading.speed;
+    var direction_clause = '';
+    var speed_clause = '';
+    if (displayable_speed != undefined)
+      speed_clause = displayable_speed + ' mph';
+    if (displayable_speed != undefined && displayable_speed > 0 && compass_dir != 'none')
+      direction_clause = 'Heading ' + compass_dir;
+
+    if (speed_clause != '' && direction_clause != '') {
+      return '<br />' + direction_clause + ' at ' + speed_clause;
+    } else if (displayable_speed == 0) {
+      return 'Speed: 0 <br />';
+    }
+  }
+  return '<br />';
+}
+
+function geofenceHtml(reading) {
+  if (reading.geofence != undefined && reading.geofence != '') {
+    return ' while ' + reading.geofence;
+  }
+  return ' ';
+}
+
+function focusOn(device_id) {
+  window.activeDeviceId = device_id;
+
+  if (window.currentInfoWindow != undefined)
+    window.currentInfoWindow.close()
+
+  centerMap(device_id);
+  highlightRow(device_id);
+  document.location.href = '#device_' + device_id + '_anchor';
+
+  //scroll the list to a good spot for displaying this device
+  if ($('#device_list_container') && $('#device_list_container').scrollTop && $('#device_list_container').scrollTop > 20) {
+    $('#device_list_container').scrollTop = $('#device_list_container').scrollTop - 20
+  }
+}
+
+function focusOnAndFollow(device_id) {
+  new_drag_point = null;
+  focusOn(device_id);
+}
+
+// When a device is selected let's highlight the row and deselect the current
+// Pass 0 to deselect all
+function highlightRow(id) {
+  if (id == undefined)
+    return;
+
+  var row = document.getElementById("row" + id);
+
+  if (row == undefined)
+    return;
+
+  // Set the previous state back to normal
+  if (prevSelectedRow) {
+    prevSelectedRow.className = prevSelectedRowClass;
+  }
+
+  // An id of 0 deselects all
+  if (id > 0) {
+    prevSelectedRow = row;
+    prevSelectedRowClass = row.className;
+
+    // Hihlight the current row
+    row.className = 'selected-row';
+  }
+}
+
+// Determines which icon to display based on event or display numbered icon
+function getMarkerType(obj) {
+  if (obj.start)
+    return '<%= image_path("icons/start_marker.png") %>';
+  else if (obj.stop)
+    return '<%= image_path("icons/stop_marker.png") %>';
+  else
+    return '<%= image_path("icons/ublip_marker.png") %>';
+}
+
+// Generic function to create a marker with custom icon and html
+function createMarker(id, point, label, icon, html) {
+  var marker = new google.maps.Marker({
+    position: point,
+    clickable: true,
+    zIndex: 2 * id + 1,
+    icon: icon,
+    flat: true,
+    title: label
+  });
+  marker.id = id; // Assign a unique id to the marker
+
+  google.maps.event.addDomListener(marker, "click", function () {
+    if (!window.currentlyDrawingDistanceRuler) {
+      openInfoWindowHtml(point, html);
+      gmap.setCenter(point);
+      if (marker && marker.id) {
+        focusOnAndFollow(marker.id);
+      }
+    }
+  });
+
+  if (window.deviceLookupHash == null)
+    window.deviceLookupHash = {};
+
+  window.deviceLookupHash[marker.id] = marker;
+
+  return marker;
+}
+
+// Toggle between full map view or split table/map view
+function toggleMap() {
+  var left = document.getElementById("left_panel");
+  var right = document.getElementById("right_panel");
+  var img = document.getElementById("toggler");
+
+  if (fullScreenMap) { // Collapse map and display table
+    $(left).removeClass('reports-content__left--hidden');
+    $(right).removeClass('reports-content__right--full');
+
+    img.src = '<%= image_path("collapse.png") %>';
+    img.parentNode.title = "Expand map view";
+
+    fullScreenMap = false;
+  } else { // Expand map
+    $(left).addClass('reports-content__left--hidden');
+    $(right).addClass('reports-content__right--full');
+
+    img.src = '<%= image_path("expand.png") %>';
+    img.parentNode.title = "Collapse map view";
+
+    fullScreenMap = true;
+  }
+
+  google.maps.event.trigger(gmap, 'resize')
+}
+
+function select_action() {
+  document.location.href = "/home/show_devices?group_type=" + $('#group_type').val();
+}
+
+function degrees_to_compass(direction, speed) {
+  if (speed === 0 || speed === null || direction === null) {
+    return "none"
+  } else if (direction >= 337.5 || direction < 22.5) {
+    return "n";
+  } else if (direction >= 22.5 && direction < 67.5) {
+    return "ne";
+  } else if (direction >= 67.5 && direction < 112.5) {
+    return "e";
+  } else if (direction >= 112.5 && direction < 157.5) {
+    return "se";
+  } else if (direction >= 157.5 && direction < 202.5) {
+    return "s";
+  } else if (direction >= 202.5 && direction < 247.5) {
+    return "sw";
+  } else if (direction >= 247.5 && direction < 292.5) {
+    return "w";
+  } else if (direction >= 292.5 && direction < 337.5) {
+    return "nw";
+  }
+}
+
+function createLabeledMarker(id, point, label, icon, html) {
+  var image = {
+    url: icon,
+    scaledSize: new google.maps.Size(28, 39),
+  }
+  var marker = new LabeledMarker(gmap, point,
+    {
+      id: id,
+      point: point,
+      label: label,
+      icon: image,
+      html: html,
+      zIndex: 2 * id,
+      flat: true,
+      clickable: true,
+      labelText: label.replace(/ /g, "&nbsp;"),
+      labelOffset: new google.maps.Size(6, -7) //,
+    });
+  marker.id = id; // Assign a unique id to the marker
+
+  return marker;
+}
+
+<% arrow_types = ['e', 'n', 'ne', 'none', 'nw', 's', 'se', 'sw', 'w'] %>
+var arrowImgs = (<%= arrow_types.map{|type| [type, image_path("icons/arrows/#{type}.png")] }.to_h.to_json %>);
+
+function createArrow(direction, speed) {
+  var icondir = degrees_to_compass(direction, speed);
+  var scaledSize = new google.maps.Size(13, 13);
+  var anchorPoint = new google.maps.Point(6.5, 33)
+  var iconPath = arrowImgs[icondir];
+  var iconArrow = new google.maps.MarkerImage(iconPath, null, null, anchorPoint, scaledSize);
+  return iconArrow;
+}
+
+// Breadcrumb view for device details/history
+function getBreadcrumbs(id) {
+  url = "/readings/last/" + id;
+  $.ajax({
+    url: url
+  }).done(function (data) {
+    var xml = GXml.parse(data.responseText);
+    var ids = xml.documentElement.getElementsByTagName("id");
+    var lats = xml.documentElement.getElementsByTagName("lat");
+    var lngs = xml.documentElement.getElementsByTagName("lng");
+    var alts = xml.documentElement.getElementsByTagName("alt");
+    var spds = xml.documentElement.getElementsByTagName("spd");
+    var dirs = xml.documentElement.getElementsByTagName("dir");
+    var geofences = xml.documentElement.getElementsByTagName("geofence");
+    var dts = xml.documentElement.getElementsByTagName("dt");
+    var addresses = xml.documentElement.getElementsByTagName("address");
+    var events = xml.documentElement.getElementsByTagName("event_type");
+    var notes = xml.documentElement.getElementsByTagName("note");
+
+    for (var i = lats.length - 1; i >= 0; i--) {
+      if (lats[i].firstChild) {
+        // Check for existence of address
+        var address = "N/A";
+        if (addresses[i].firstChild != undefined)
+          address = addresses[i].firstChild.nodeValue;
+
+        // Check for existence of note
+        var note = '';
+        if (notes[i].firstChild != undefined)
+          note = notes[i].firstChild.nodeValue;
+
+        var geofence = (geofences[i].firstChild == null) ? null : geofences[i].firstChild.nodeValue;
+        var speed = spds[i].firstChild.nodeValue;
+        var event = events[i].firstChild.nodeValue;
+        var reading = {
+          id: ids[i].firstChild.nodeValue,
+          lat: lats[i].firstChild.nodeValue,
+          lng: lngs[i].firstChild.nodeValue,
+          address: address,
+          dt: dts[i].firstChild.nodeValue,
+          note: note,
+          event: event,
+          geofence: geofence
+        };
+        readings.push(reading);
+        var point = new google.maps.LatLng(reading.lat, reading.lng);
+
+        // Different icon types
+        var icon = getMarkerType(reading);
+
+        if (i == 0) {
+          createMarker(reading.id, point, recenticon, createReadingHtml(reading.id));
+          gmap.setCenter(point);
+          openInfoWindowHtml(point, createReadingHtml(reading.id));
+          highlightRow(reading.id);
+        } else {
+          createMarker(reading.id, point, icon, createReadingHtml(reading.id));
+        }
+      }
+    }
+
+  });
+}
+
+// Get a reading based on id
+function getReadingById(id) {
+  for (var i = 0; i < readings.length; i++) {
+    var reading = readings[i];
+    if (reading.id == id)
+      return reading;
+  }
+}
+
+function getDeviceByLastGPSReadingId(id) {
+  for (var i = 0; i < devices.length; i++) {
+    var device = devices[i];
+    if (device.last_gps_reading_id == id)
+      return device;
+  }
+}
+
+function updateReadingForTrip(id, start, stop) {
+  reading = getReadingById(id);
+  if (typeof reading != 'undefined') {
+    reading.start = start;
+    reading.stop = stop;
+  }
+}

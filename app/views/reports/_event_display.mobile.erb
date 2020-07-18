@@ -1,0 +1,39 @@
+<% if reading.gateway_event_type.nil? %>
+	-
+<% elsif params[:action] == 'geofence' %>
+
+	<%= (reading.geofence_enter? || reading.geofence_exit?) ? reading.geofence_event_type.titleize : 'Within' %> <%= reading.geofence ? reading.geofence.name : 'geofence' %>
+
+<% elsif reading.gateway_event_type == 'normal' %>
+
+	<% if reading.geofence_event_type != '' %>
+		<%= (reading.geofence_enter? || reading.geofence_exit?) ? reading.geofence_event_type.titleize : 'Within' %> <%= reading.geofence ? reading.geofence.name : 'location' %>
+	<% else %>
+		<%= reading.gateway_event_type.titleize %>
+	<% end %>
+
+<% elsif reading.event_type == EventTypes::Stop && reading.speed == 0 %>
+
+	Stop
+
+<% elsif reading.event_type == EventTypes::Idling %>
+
+	Idle
+
+<% elsif reading.event_type == EventTypes::Speed %>
+
+	<%= reading.show_event_type %>
+
+<% elsif reading.event_type == EventTypes::EngineOn or reading.event_type == EventTypes::EngineOff %>
+
+    <%= reading.show_event_type %>
+
+<% else %>
+
+	<%= reading.display_event_type %>
+
+<% end %>
+
+<% if params[:action] != 'geofence' && reading.geofence_event_type.to_s != '' && reading.gateway_event_type != 'normal' %>
+	<%= (reading.geofence_enter? || reading.geofence_exit?) ? "while #{reading.geofence_event_type}ing " : 'within ' %> <%= reading.geofence ? reading.geofence.name : 'location' %>
+<% end %>

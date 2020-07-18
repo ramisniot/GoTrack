@@ -1,0 +1,143 @@
+
+
+
+    <%if @all_devices.size == 0 %>
+    <table width="100%" border="0">
+    <tr>
+        <td width="50%" valign="top">
+
+        	<div id="new" style="margin-bottom: 10px; padding: 15px; background-color: #FFFFCC; font-weight: bold; color: #333333">
+        		Your GoTrack order is currently being processed.  When your device has been activated it will appear in the summary table below.
+				You'll then be able to rename the device by going to the <a href="/devices" title="Manage your devices">Devices</a> tab.
+				 Feel free to add additional <a href="/users" title="Manage your users">users</a> or change your <a href="/settings" title="Manage your settings">settings</a>.
+        	</div>
+
+
+
+
+
+				</td></tr>
+			</table>
+			  <%else%>
+<table width="100%" class="panel_table">
+
+    <tr>
+            <th>
+             Name
+            </th>
+            <th width="30">
+            </th>
+            <th>
+            Last Address
+            </th>
+            <th>
+            Last Report
+            </th>
+    </tr>
+     <%if @devices_all== nil ||  @devices_all.length == 0 %>
+     <%else%>
+    <tr>
+
+
+
+        <td colspan="4" class="panel_table__header" />
+
+
+                 <span class="rad_1" style="float:left; margin-right:8px;"></span>
+
+
+
+
+      <span style="margin-top:4px; float:left;">Default Fleet</span>
+        </td>
+    </tr>
+
+    <% for device in @devices_all%>
+
+
+
+    <tr class="<%= cycle('dark-row', 'light-row') %>" id="row<%= device.id %>">
+        <td>
+        <% if device.last_gps_reading %>
+		<a href="javascript:centerMap(<%= device.id%>);highlightRow(<%=device.id %>);" title="Center map on this device"><%= device.name %></a>
+		<% else %>
+
+		<%= device.name %>
+		<% end %>
+        </td>
+		<td style="font-size:11px;">
+		<a href="/reports/all/<%= device.id %>" title="View device details">details</a>
+		</td>
+        <td>
+        <% if device.last_gps_reading %>
+        <%= device.last_gps_reading.short_address %>
+        <% else %>N/A<% end %>
+        </td>
+        <td>
+        <% if device.last_gps_reading %>
+        <%= standard_date_and_time(device.last_gps_reading.recorded_at,Time.now) %><% else %>N/A<% end %>
+        </td>
+        </tr>
+        <% end %>
+             <% end %>
+
+
+
+
+
+
+
+
+
+    <%for group_id in @group_for_data%>
+    <tr>
+
+        <td colspan="4" class="panel_table__header" />
+
+           <% if (1..9).include?(group_id.image_value) %>
+             <span class="rad_<%= group_id.image_value %>" style="float:left; height:24px; padding:0; margin-right:8px;" ></span>
+           <% else %>
+             <span class="rad_1" style="float:left; height:24px; padding:0; margin-right:8px;" ></span>
+           <%end%>
+
+              <span style="float:left; margin-top:4px;"><%= group_id.name %> </span>
+        </td>
+    </tr>
+
+
+        <% for device in @devices_ids %>
+
+       <% if device.group_id==group_id.id%>
+
+    <tr class="<%= cycle('dark-row', 'light-row') %>" id="row<%= device.device.id %>">
+
+        <td>
+        <% if device.last_gps_reading %>
+		<a href="javascript:centerMap(<%= device.device.id %>);highlightRow(<%= device.device.id %>);" title="Center map on this device"><%= device.device.name %></a>
+
+
+		<% else %>
+
+		<%= device.device.name %>
+		<% end %>
+        </td>
+		<td style="font-size:11px;">
+		<a href="/reports/all/<%= device.device.id %>" title="View device details">details</a>
+		</td>
+        <td>
+        <% if device.device.last_gps_reading %>
+        <%= device.device.last_gps_reading.short_address %>
+        <% else %>N/A<% end %>
+        </td>
+        <td>
+        <% if device.device.last_gps_reading %><%= standard_date_and_time(device.last_gps_reading.recorded_at,Time.now) %><% else %>N/A<% end %>
+        </td>
+        </tr>
+        <% end %>
+
+           <% end %>
+           <%end%>
+
+        </table>
+
+        <% end %>

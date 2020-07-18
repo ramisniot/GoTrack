@@ -1,0 +1,145 @@
+#id,event_type,speed,time offset
+
+#one legged trip
+1001,Engine On,0,1.minute
+1002,Ignition On,10,1.minute
+1003,Engine Off,0,1.minute
+
+#two legged trip
+1004,Engine On,0,1.minute
+1005,Ignition On,10,1.minute
+1006,Ignition On,0,1.minute
+1007,Ignition On,0,1.minute
+1008,Ignition On,0,1.minute
+1009,Ignition On,0,1.minute
+1010,Ignition On,10,1.minute
+1011,Ignition On,20,1.minute
+1012,Engine Off,0,1.minute
+
+#one legged trip with warmup
+1013,Engine On,0,1.minute
+1014,Ignition On,0,1.minute
+1015,Ignition On,0,1.minute
+1016,Ignition On,0,1.minute
+1017,Ignition On,0,1.minute
+1018,Ignition On,0,1.minute
+1019,Ignition On,10,1.minute
+1020,Ignition On,20,1.minute
+1021,Engine Off,0,1.minute
+
+#one leg, engine off but still moving,,
+1022,Engine On,0,1.minute
+1023,Ignition On,10,1.minute
+1024,Engine Off,1,1.minute
+
+#three legs, with warmup,,
+1025,Engine On,0,1.minute
+1026,Ignition On,0,1.minute
+1027,Ignition On,0,1.minute
+1028,Ignition On,0,1.minute
+1029,Ignition On,0,1.minute
+1030,Ignition On,0,1.minute
+1031,Ignition On,10,1.minute
+1032,Ignition On,20,1.minute
+1033,Ignition On,10,1.minute
+1034,Ignition On,0,1.minute
+1035,Ignition On,0,1.minute
+1036,Ignition On,0,1.minute
+1037,Ignition On,0,1.minute
+1038,Ignition On,0,1.minute
+1039,Ignition On,10,1.minute
+1040,Ignition On,20,1.minute
+1041,Ignition On,10,1.minute
+1042,Ignition On,0,1.minute
+1043,Ignition On,0,1.minute
+1044,Ignition On,0,1.minute
+1045,Ignition On,0,1.minute
+1046,Ignition On,0,1.minute
+1047,Ignition On,10,1.minute
+1048,Ignition On,20,1.minute
+1049,Ignition On,10,1.minute
+1050,Ignition On,0,1.minute
+1051,Ignition On,0,1.minute
+1052,Ignition On,0,1.minute
+1053,Engine Off,0,1.minute
+
+#two legs, out of order readings,,
+1054,Engine On,0,1.minute
+1055,Ignition On,0,1.minute
+1056,Ignition On,10,1.minute
+1057,Ignition On,0,1.minute
+1058,Ignition On,10,3.minutes
+1059,Ignition On,0,-2.minutes
+1060,Ignition On,0,1.minute
+1061,Ignition On,20,2.minutes
+1062,Engine Off,0,1.minute
+
+
+#a trip that never ended, followed by a new trip,,
+1063,Engine On,0,1.minute
+1064,Ignition On,0,1.minute
+1065,Ignition On,10,1.minute
+1066,Ignition On,10,1.minute
+1067,Ignition On,10,1.minute
+1068,Engine On,0,30.minutes
+1069,Ignition On,0,1.minute
+1070,Ignition On,10,1.minute
+1071,Ignition On,10,1.minute
+1072,Ignition On,0,1.minute
+1073,Engine Off,0,1.minute
+
+
+#small trips and legs alternation
+
+1074,Engine On,0,1.minute
+1075,Ignition On,0,1.minute
+1076,Ignition On,0,1.minute
+1077,Engine Off,0,1.minute
+1078,Engine On,0,1.minute
+1079,Ignition On,10,1.minute
+1080,Ignition On,20,1.minute
+1081,Ignition On,30,1.minute
+1082,Engine Off,1,1.minute
+1083,Ignition Off,0,1.minute
+1084,Ignition Off,0,1.minute
+1085,Ignition Off,0,1.minute
+1086,Ignition Off,0,1.minute
+1087,Engine On,0,1.minute
+1088,Ignition On,0,1.minute
+1089,Engine Off,0,1.minute
+1090,Engine On,0,1.minute
+1091,Ignition On,10,1.minute
+1092,Ignition On,20,1.minute
+1093,Engine Off,0,1.minute
+
+
+#three legs, with warmup & process separate,,
+1094,Engine On,0,1.minute
+1095,Ignition On,0,1.minute
+1096,Ignition On,0,1.minute
+1097,Ignition On,0,1.minute
+1098,Ignition On,0,1.minute
+1099,Ignition On,0,1.minute
+1100,Ignition On,10,1.minute
+1101,Ignition On,20,1.minute
+1102,Ignition On,10,1.minute
+1103,Ignition On,10,1.minute
+1104,Ignition On,10,1.minute
+1105,Ignition On,10,1.minute
+1106,Ignition On,0,1.minute
+1107,Ignition On,0,1.minute
+1108,Ignition On,10,1.minute
+1109,Ignition On,20,1.minute
+1110,Ignition On,10,1.minute
+1111,Ignition On,0,1.minute
+1112,Ignition On,0,1.minute
+1113,Ignition On,0,1.minute
+1114,Ignition On,0,1.minute
+1115,Ignition On,0,1.minute
+1116,Ignition On,10,1.minute
+1117,Ignition On,20,1.minute
+1118,Ignition On,10,1.minute
+1119,Ignition On,0,1.minute
+1120,Ignition On,0,1.minute
+1121,Ignition On,0,1.minute
+1122,Engine Off,0,1.minute

@@ -1,0 +1,54 @@
+<div class="page-header">
+  <div class="page-header__title-container">
+    <span class="page-title">
+      Create State Mileage Report
+    </span>
+  </div>
+</div>
+  <%= form_for :one_time_report, url: { action: :create } do |f| %>
+  <div class="form">
+    <div class="form-row form-row--flex form__row">
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">Name</div>
+        <%= f.text_field :report_name, class: 'form-input form-input--full-width' %>
+      </div>
+
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">Applies to</div>
+        <div class="display--flex form__input">
+          <%= select_tag('one_time_report[report_params][group_id]', groups_options, prompt: 'All Fleets', class: 'form-input form-input--full-width form-select') %>
+          <i class="fa fa-caret-down form-select__arrow" aria-hidden="true"></i>
+          <div class="new-scheduled-report__separators new-scheduled-report__separators--select">OR</div>
+          <%= select_tag('one_time_report[report_params][device_id]', options_from_collection_for_select(current_account().provisioned_devices,'id','name'), prompt: 'Choose a Device', class: 'form-input form-input--full-width form-select') %>
+          <i class="fa fa-caret-down form-select__arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="form-row form-row--flex form__row">
+
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">Report From</div>
+        <div class="form-select-wrapper form__input">
+          <%= f.datetime_select :from, { order: [:day, :month, :year], discard_hour: true, discard_minute: true, ampm: true, default: 24.hours.from_now.beginning_of_hour, use_short_month: true, date_separator: '<i class="fa fa-caret-down form-select__arrow form-date-picker__arrow-separator" aria-hidden="true"></i>' }, { class: 'form-select' } %>
+          <i class="fa fa-caret-down form-select__arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">Report To</div>
+        <div class="form-select-wrapper form__input">
+          <%= f.hidden_field :report_type, value: 'state_mileage' %>
+          <%= f.datetime_select :to, { order: [:day, :month, :year], discard_hour: true, discard_minute: true, ampm: true, default: 24.hours.from_now.beginning_of_hour, use_short_month: true, date_separator: '<i class="fa fa-caret-down form-select__arrow form-date-picker__arrow-separator" aria-hidden="true"></i>' }, { class: 'form-select' } %>
+          <i class="fa fa-caret-down form-select__arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+    <div class="form-row form-row--flex form__row">
+      <div class="form-row form-row--inline form-row--actions">
+        <%= f.submit 'Save', class: 'button button--primary button--large button--right' %>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,20 @@
+<div id="special_message" class="login-message-preview">
+  <div id="login_message_content" class="login-message-preview__text login-message-preview__static-text"><%= LoginMessage.instance.to_html %></div>
+  <div class="form-row form-row--flex">
+    <% if LoginMessage.instance.persisted? %>
+      <div class="login-message__last-edited">last edited <%= LoginMessage.instance.updated_at.in_time_zone(current_user.time_zone).strftime('%b %d, %Y') %></div>
+    <% end %>
+    <a class="button button--primary button--large login-message-preview__edit-btn" onclick="showLoginMessageForm()">Edit</a>
+  </div>
+</div>
+
+<%= form_tag(admin_set_login_message_path, { id: :login_message_form, class: 'special_message login-message-preview', style: 'display: none;' }) do %>
+	<textarea name="login_message[message]" class="login-message-preview__text"><%= LoginMessage.instance.message %></textarea>
+  <div class="form-row form-row--flex">
+    <div class="form-row form-row--inline form-row--actions">
+      <a class="login-message-preview__help" target="_blank" href="http://en.wikipedia.org/wiki/HTML#Element_examples">Formatting help</a>
+      <input class="button button--primary button--large button--inline button--right" type="submit" value="Update" onclick='return(confirm("Are you sure?"))' />
+      <a class="button button--secondary button--inline button--right" href="javascript:hideLoginMessageForm();">Cancel</a>
+    </div>
+  </div>
+<% end %>

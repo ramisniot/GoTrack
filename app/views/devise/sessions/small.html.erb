@@ -1,0 +1,54 @@
+<div id="login_form_container" width="20">
+
+  <% if current_user %>
+    <form action="/login" method="post" id="logform">
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+      <table class="form_table">
+        <tr>
+          <th>Email:</th>
+          <td><input type="text" id="username" name="email" class="input" value="<%= current_user.email %>"/></td>
+        </tr>
+        
+        <tr>
+          <th>Password:</th>
+          <td><input type="password" id="password" name="password" value="" class="input" onfocus="settext(this.id);"/></td>
+        </tr>
+        
+        <tr>
+          <th></th>
+          <td><input type="checkbox" id="remember_me" name="remember_me"/> <span class="small_text">Remember me on this computer</span></td>
+        </tr>
+        
+        <tr>
+          <th></th>
+          <td><input type="submit" value="Sign In" /></td>
+        </tr>
+      </table>
+    </form>                    
+  <%else%>
+    <form action="/login" method="post" id="logform">
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+      <table class="form_table">
+        <tr>
+          <th>Email:</th>
+          <td><input type="text" id="username" name="email" class="input" value="<%= flash[:username] %>" /></td>
+        </tr>
+        
+        <tr>
+          <th>Password:</th>
+          <td><input type="password" id="password" name="password" value="" class="input"/></td>
+        </tr>
+        
+        <tr>
+          <th></th>
+          <td><input type="checkbox" id="remember_me" name="remember_me"/> <span class="small_text">Remember me on this computer</span></td>
+        </tr>
+        
+        <tr>
+          <th></th>
+          <td><input type="submit" value="Sign In" /></td>
+        </tr>
+      </table>	
+    </form>    
+  <%end%>    
+</div>

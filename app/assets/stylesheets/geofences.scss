@@ -1,0 +1,78 @@
+@import "colors";
+@import "constants";
+@import "media_queries_breakpoints";
+
+.geofences {
+  width: 100%;
+
+  &__title {
+    width: 100%;
+    margin: $base-spacing-unit 0 $base-spacing-unit;
+  }
+
+  &__btn {
+    padding: 10px;
+    width: auto;
+  }
+
+  &-form {
+    display: flex;
+    padding: $base-spacing-unit;
+    background-color: $color-pearl;
+    border-radius: 4px;
+    margin-bottom: $base-spacing-unit;
+
+    &__arrow {
+      top: 11px;
+    }
+
+    &-map {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      order: 2;
+      width: 65%;
+
+      @media #{$tablets} {
+        width: 60%;
+      }
+
+      & > #map {
+        height: 100% !important;
+      }
+
+      &__wrapper {
+        flex: 1;
+        position: relative;
+        width: 100%;
+        border-radius: 4px;
+
+        & > .googlemap {
+          height: 680px !important;
+          border-radius: 4px;
+        }
+      }
+    }
+
+    &-data {
+      order: 1;
+      width: 35%;
+      margin-right: $base-spacing-unit;
+
+      @media #{$tablets} {
+        width: 40%;
+      }
+    }
+
+    &__input {
+      display: block;
+      margin-top: 5px;
+      background-color: $color-white;
+    }
+
+    &__instructions {
+      font-size: 11px;
+      color: $color-tundora-gray;
+    }
+  }
+}

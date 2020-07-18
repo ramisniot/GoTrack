@@ -1,0 +1,19 @@
+@import "constants";
+
+.users {
+  width: 95%;
+  margin-top: $base-spacing-unit;
+  margin-bottom: 60px;
+
+  &__title {
+    margin-bottom: $base-spacing-unit;
+  }
+
+  &__table {
+    margin-top: $base-spacing-unit;
+  }
+
+  &__empty-state {
+    margin-top: 70px;
+  }
+}

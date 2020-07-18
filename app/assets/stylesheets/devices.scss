@@ -1,0 +1,58 @@
+@import "colors";
+@import "constants";
+
+.devices {
+  width: 95%;
+  margin-top: $base-spacing-unit;
+  margin-bottom: 60px;
+
+  &__title {
+    margin-bottom: $base-spacing-unit;
+  }
+
+  &__table {
+    margin-top: $base-spacing-unit !important;
+  }
+
+  &-form {
+    padding: 10px 40px;
+    background-color: $color-pearl;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+
+  &__empty-state {
+    margin-top: 70px;
+  }
+}
+
+.devices-search-bar {
+
+  &__button-container {
+    flex: 1;
+  }
+
+  &__search-box {
+    float: left;
+    padding: 5px;
+    background-color: $color-white;
+    border-radius: 4px;
+    border: none !important;
+    height: 27px;
+    font-size: 12px;
+    width: 270px;
+    padding-left: 5px !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    &::-ms-expand {
+      display: none;
+    }
+  }
+
+  &__button {
+    margin-right: $base-spacing-unit;
+    display: inline-block;
+    float: right;
+  }
+}

@@ -1,0 +1,137 @@
+scheduled_report_uncompleted:
+    delivered_on:
+    report_span_value: "1"
+    user_id: 1
+    report_params: |
+      --- !map:HashWithIndifferentAccess
+      account_id: 4
+      device_id:
+      group_id:
+
+    report_span_units: Days
+    id: 538
+    report_data:
+    report_type: group_trip
+    recur_interval: 1.day
+    created_at: 2012-03-01 11:00:10
+    recur: "1"
+    scheduled_for: 2012-03-02 11:00:00
+    updated_at: 2012-03-01 11:00:10
+    completed: "0"
+    report_name: Start Stop Report for Yesterday Staging Account
+    type: "ScheduledReport"
+
+scheduled_report_two:
+    delivered_on:
+    report_span_value: "1"
+    user_id: 1
+    report_params: |
+      --- !map:HashWithIndifferentAccess
+      account_id: 1
+      device_id: 1
+      group_id:
+
+    report_span_units: Weeks
+    id: 539
+    report_data:
+    report_type: speeding
+    recur_interval: 1.week
+    created_at: 2012-03-01 12:00:13
+    recur: "1"
+    scheduled_for: 2012-03-02 12:00:00
+    updated_at: 2012-03-01 12:00:13
+    completed: "0"
+    report_name: Speeding Reports Weekly
+    type: "ScheduledReport"
+
+scheduled_report_three:
+    delivered_on:
+    report_span_value: "1"
+    user_id: 1
+    report_params: |
+      --- !map:HashWithIndifferentAccess
+      account_id: 1
+      device_id: 1
+      group_id:
+
+    report_span_units: Weeks
+    id: 540
+    report_data:
+    report_type: state_mileage
+    recur_interval: 1.week
+    created_at: 2012-03-01 12:00:13
+    recur: "1"
+    scheduled_for: 2012-03-02 12:00:00
+    updated_at: 2012-03-01 12:00:13
+    completed: "0"
+    report_name: State Mileage Reports Weekly
+    type: "ScheduledReport"
+
+scheduled_report_completed:
+    delivered_on:
+    report_span_value: "1"
+    user_id: 1
+    report_params: |
+      --- !map:HashWithIndifferentAccess
+      account_id: 1
+      device_id: 1
+      group_id:
+
+    report_span_units: Weeks
+    id: 541
+    report_data: "TITLE"
+    report_type: speeding
+    recur_interval: 1.week
+    created_at: 2012-03-01 12:00:13
+    recur: "1"
+    scheduled_for: 2012-03-02 12:00:00
+    updated_at: 2012-03-01 12:00:13
+    completed: "1"
+    report_name: Speeding Reports Weekly
+    type: "ScheduledReport"
+
+one_time_report_uncompleted:
+    delivered_on:
+    report_span_value:
+    user_id: 1
+    report_params: |
+      --- !map:HashWithIndifferentAccess
+      account_id: 1
+      device_id: 1
+      group_id:
+
+    report_span_units:
+    id: 542
+    report_data:
+    report_type: state_mileage
+    recur_interval:
+    created_at: 2012-03-01 12:00:13
+    recur: "0"
+    scheduled_for: 2012-03-02 12:00:00
+    updated_at: 2012-03-01 12:00:13
+    completed: "0"
+    report_name: Live State Mileage Report Incomplete
+    type: "OneTimeReport"
+
+one_time_report_completed:
+    delivered_on:
+    report_span_value:
+    user_id: 1
+    report_params: |
+      --- !map:HashWithIndifferentAccess
+      account_id: 1
+      device_id: 1
+      group_id:
+
+    report_span_units:
+    id: 543
+    report_data:
+    report_type: state_mileage
+    recur_interval:
+    created_at: 2012-03-01 12:00:13
+    recur: "0"
+    scheduled_for: 2012-03-02 12:00:00
+    updated_at: 2012-03-01 12:00:13
+    completed: "1"
+    report_name: Live State Mileage Report Complete
+    type: "OneTimeReport"

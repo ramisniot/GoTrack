@@ -1,0 +1,3 @@
+"Device","On","At","Departed","Travel Time","Miles","Arrived","At","Idle Time","Stop Time"
+"Device Test","09-Nov-2017","01:22 PM","Geofence; 20 NW Chipman Rd, Dallas TX","05h:00m","100.0","Geofence; 20 NW Chipman Rd, Dallas TX","01:34 PM","","00h:00m"
+"Device Test","09-Nov-2017","01:34 PM","Geofence; 20 NW Chipman Rd, Dallas TX","05h:35m","150.0","Geofence; 20 NW Chipman Rd, Dallas TX","01:55 PM","00h:00m",""

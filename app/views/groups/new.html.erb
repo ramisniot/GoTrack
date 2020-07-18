@@ -1,0 +1,15 @@
+<%= render partial: "/layouts/flash_message" %>
+
+<%= form_tag(groups_path, method: :post) do %>
+  <%= render partial: 'form_content', locals: { on_edit: false } %>
+  <div class="new-fleet-form__actions">
+    <%= submit_tag "Create Fleet", class: 'button button--primary button--large button--inline button--right' %>
+    <%= link_to 'Cancel', groups_path, class: "button button--secondary button--inline button--right" %>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+	window.onload = function() {
+		document.getElementById("group_name").focus();
+	}
+</script>

@@ -1,0 +1,43 @@
+@import "colors";
+@import "constants";
+
+.contact {
+  width: 95%;
+  margin-top: $base-spacing-unit;
+  margin-bottom: $base-spacing-unit * 3;
+
+  &__title {
+    margin-bottom: $base-spacing-unit;
+  }
+
+  &__description {
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: 300;
+    margin-bottom: $base-spacing-unit;
+    text-decoration: none;
+  }
+
+  &-form {
+    padding: 10px 40px;
+    background-color: $color-pearl;
+    border-radius: 4px;
+    margin-bottom: $base-spacing-unit / 2;
+
+    &__textarea {
+      display: block;
+      margin-top: $base-spacing-unit;
+      background-color: $color-white;
+      resize: none;
+      width: 100%;
+      height: 200px;
+      border: none;
+      padding: 5px;
+      font-family: Roboto;
+      font-size: 14px;
+      font-weight: 300;
+      box-sizing: border-box;
+      overflow: auto;
+    }
+  }
+}

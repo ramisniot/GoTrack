@@ -1,0 +1,173 @@
+<div class="settings-content">
+  <%= render partial:"/layouts/flash_message" %>
+
+  <form method="post">
+    <div class="settings-header">
+      <div class="page-title settings-header__title">General Settings</div>
+      <div class="settings-header__actions">
+        <input class="button button--primary" type="submit" value="Save" />
+      </div>
+    </div>
+
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
+    <div class="settings-row">
+      <div class="settings-row__cell settings-box">
+        <div class="settings-box__subtitle">Company or Fleet Name</div>
+        <div class="settings-box__text">
+          Your company or fleet name is used to personalize your login screen and header banner.
+          <% if current_user.is_admin? %>
+            Please note that changing your company or fleet name applies to all users within this account.
+          <% else %>
+            You must be an account administrator to change this setting.
+          <% end %>
+        </div>
+        <input class="form-input" type="text" name="company" value="<%= @account.company %>" size="30"<%= ' disabled' unless current_user.is_admin? %>/>
+      </div>
+
+      <div class="settings-row__cell settings-box">
+        <div class="settings-box__subtitle">Speed Limit</div>
+        <div class="settings-box__text">
+          <% if current_user.is_admin? %>
+            Please enter the speed limit in MPH.
+          <% else %>
+            You must be an account administrator to change this setting.
+          <% end %>
+        </div>
+        <input class="form-input" type="text" name="max_speed" value="<%= @account.max_speed %>" size="30"<%= ' disabled' unless current_user.is_admin? %>/>
+      </div>
+    </div>
+
+    <div class="settings-row">
+      <div class="settings-row__cell settings-box">
+        <div class="settings-box__subtitle">Notifications</div>
+        <div class="settings-box__text">
+          Check the box below if you'd like to receive exception notifications for this account.
+          All exceptions will be sent to the email address associated with your account.
+          Exceptions include entering a location, exiting a location, and when a device goes offline.
+        </div>
+
+        <div>
+          <div class="settings-box__notification-option">
+            <input class="enotify-option-js" name="notify" id="notify_0" type="radio"  value="0" <% if @user.enotify == 0 %> checked="checked"<% end %> />
+            <label for="notify_0">Disable Notifications</label>
+          </div>
+
+          <div class="settings-box__notification-option">
+            <input class="enotify-option-js" name="notify"  id="notify_1" type="radio"  value="1"  <% if @user.enotify == 1%> checked="checked"<% end %>/>
+            <label for="notify_1">Enable notifications for all devices in this account</label>
+          </div>
+
+          <div class="settings-box__notification-option">
+            <input class="enotify-option-js" name="notify" id="notify_2" type="radio" value="2" <% if @user.enotify == 2%> checked="checked"<% end %> />
+            <label for="notify_2">Enable notifications for selected fleets</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-row__cell">
+        <div class="settings-box">
+          <%= render 'subscribed_notifications' %>
+        </div>
+
+        <div id="to_update_groups">
+            <div class="settings-box">
+              <div id="subscribed-notification-groups-js"></div>
+
+              <div class="settings-box__instruction">
+                Please select one or more fleets from the list below
+              </div>
+
+              <% if !@groups.empty? %>
+                <% for group in @groups %>
+                  <div>
+                    <input name="rad_grp<%=group.id %>" type="checkbox" value="<%= group.id %>" <%= "checked" if group.is_selected_for_notification(@user) %> />
+                    <%= group.name %>
+                  </div>
+              <% end %>
+              <% else %>
+                 No fleets added.
+              <% end %>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <% unless current_user.is_read_only? %>
+      <div class="settings-row">
+        <div class="settings-box settings-box--full">
+          <div class="settings-box__subtitle">Time Zone</div>
+          <div class="settings-box__text">
+            <% if current_user.is_admin? %>
+              Please specify your time zone.
+              This will ensure that all times displayed within the application are converted to your local time.
+            <% else %>
+              You must be an account administrator to change this setting.
+            <% end %>
+          </div>
+
+          <select name="time_zone" class="form-select"<%= ' disabled' unless current_user.is_admin? %>>
+            <option value=''>No time zone selected</option>
+            <% ActiveSupport::TimeZone.us_zones.each{|i| %>
+              <option value="<%= i.name %>" <%if i.name == @account.time_zone %> selected="selected"<% end %>><%= i %></option>
+            <% } %>
+          </select>
+          <i class="fa fa-caret-down form-select__arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <div class="settings-row">
+        <div class="settings-box settings-box--full">
+          <div class="settings-box__subtitle">Working Hours</div>
+
+          <div class="settings-box__text">
+            <% if current_user.is_admin? %>
+              Check the box below and fill out the daily work hours if you would like a notification when any devices are moved outside of working hours
+            <% else %>
+              You must be an account administrator to change this setting.
+            <% end %>
+          </div>
+
+          <div class="settings-box__text">
+            <label for="notify_on_working_hours">
+              Notify for motion outside working hours
+            </label>
+            <input name="notify_on_working_hours" id="notify_on_working_hours" value="1"<%= ' checked="checked"' if @account.notify_on_working_hours? %><%= ' disabled' unless current_user.is_admin? %> type="checkbox" />
+          </div>
+
+          <table class="settings-working-hours">
+            <tr>
+              <th></th>
+              <th>Sun</th>
+              <th>Mon</th>
+              <th>Tues</th>
+              <th>Wed</th>
+              <th>Thurs</th>
+              <th>Fri</th>
+              <th>Sat</th>
+            </tr>
+            <tr>
+              <td>Start</td>
+              <% for index in 0..6 %>
+                <td>
+                  <%= hour_dropdown('working_hours[]', @account.working_hours[index]) %>
+                  <i class="fa fa-caret-down form-select__arrow" aria-hidden="true"></i>
+                </td>
+              <% end %>
+            </tr>
+
+            <tr>
+              <td>End</td>
+              <% for index in 7..13 %>
+                <td>
+                  <%= hour_dropdown('working_hours[]', @account.working_hours[index]) %>
+                  <i class="fa fa-caret-down form-select__arrow" aria-hidden="true"></i>
+                </td>
+              <% end %>
+            </tr>
+          </table>
+        </div>
+      </div>
+    <% end %>
+  </form>
+</div>

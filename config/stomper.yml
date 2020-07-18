@@ -1,0 +1,20 @@
+common: &default_settings
+  destinations:
+    telematics: '/queue/telematics_rsc'
+    reverse_geocoder: '/queue/reverse_geocoder_rsc'
+    scheduled_reports: '/queue/scheduled_reports_rsc'
+
+development:
+  <<: *default_settings
+  host: localhost
+  login: admin
+  passcode: admin
+
+test:
+  <<: *default_settings
+
+staging:
+  <<: *default_settings
+  host: localhost
+  login: guest
+  passcode: guest

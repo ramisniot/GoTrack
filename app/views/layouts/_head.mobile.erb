@@ -1,0 +1,24 @@
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+<meta name="format-detection" content="address=no" />
+
+<%= stylesheet_link_tag 'application' %>
+<%= javascript_include_tag 'application-mobile' %>
+
+<% if include_maps_js %>
+  <%= render partial: 'layouts/includes/map_key' %>
+  <script type="text/javascript">
+    window.default_map_type = '<%= current_user().default_map_type.to_s.blank? ? DEFAULT_MAP_TYPE : current_user().default_map_type %>';
+  </script>
+
+
+  <% if params[:controller] == 'home' %>
+    <%= javascript_include_tag 'home-page' %>
+  <% else %>
+    <%= javascript_include_tag 'reports-page' %>
+  <% end %>
+
+  <%= render partial: '/shared/set_object_visibility_js' %>
+<% end %>
+
+<%= csrf_meta_tag %>

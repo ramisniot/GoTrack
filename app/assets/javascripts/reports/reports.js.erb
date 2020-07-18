@@ -1,0 +1,172 @@
+// Switch between devices on reports view but keep the timeframe, if it exists
+function changeDevice(device_id, report_type, start_date, end_date, form) {
+    if (form)
+      $(form).attr('action', '/reports/' + report_type + '/' + device_id);
+    var query = '';
+    if (start_date) { query += "?start_date=" + start_date };
+    if (end_date) { query += "&end_date=" + end_date };
+    document.location.href = '/reports/' + report_type + '/' + device_id + query;
+}
+
+function displayTripOverview(trip_id, marker) {
+
+	// Handle the initial display of the map with the first trip
+	if(trip_id == undefined)
+		trip_id = readings[0].id;
+
+	//gmap.clearOverlays();
+	if(window.previousTripMarkers != undefined )
+		for(var i=0; i<window.previousTripMarkers.length; i++)
+			window.previousTripMarkers[i].setMap(null);
+	window.previousTripMarkers = new Array;
+
+	highlightRow(trip_id);
+
+	var bounds = new google.maps.LatLngBounds();
+
+	var count = 0; // Use count to limit looping. Just grab the start/stop address for the trip and stop looping
+	for(i=0; i < readings.length && count <= 1; i++) {
+
+		var reading = readings[i];
+		var point = new google.maps.LatLng(reading.lat, reading.lng);
+		if(reading.id == trip_id) {
+			if(reading.start) {
+				window.previousTripMarkers.push(createMarker(trip_id, point, getMarkerType(reading), createTripHtml(reading)));
+				bounds.extend(point);
+				count++;
+			} else if(reading.stop) {
+				window.previousTripMarkers.push(createMarker(trip_id, point, getMarkerType(reading), createTripHtml(reading)));
+				bounds.extend(point);
+				count++;
+			}
+		}
+	}
+	gmap.fitBounds(bounds);
+}
+
+// Create html for selected reading
+function createTripHtml(reading) {
+    var address = 'Getting Address...';
+    if(reading.address != null){
+        address = reading.address;
+    };
+
+    html = '<div class="dark_grey"><span class="blue_bold">' + address + '<br />' + reading.dt + '</span><br />';
+    html += '<br /><a href="/reports/trip_detail/' + reading.id + '">View trip details</a>'
+	return html;
+}
+
+// Center map on reading and show details
+function centerMapOnReading(id) {
+  var reading = getReadingById(id);
+  var point = new google.maps.LatLng(reading.lat, reading.lng);
+  var scale = Math.pow(2, gmap.getZoom());
+  var pixelOffset = new google.maps.Point(0, (30/scale) || 0);
+  var pointPx = gmap.getProjection().fromLatLngToPoint(point);
+  var offset = new google.maps.Point(
+    pointPx.x - pixelOffset.x,
+    pointPx.y - pixelOffset.y
+  );
+  var center = gmap.getProjection().fromPointToLatLng(offset);
+  openInfoWindowHtml(point, createReadingHtml(id), 'reports');
+  gmap.setCenter(center);
+}
+
+
+function zoomToReadingsBounds() {
+	if(readings == null || readings.length == 0)
+		return true;
+	var bounds = new google.maps.LatLngBounds();
+	for(var i = 0; i< readings.length; i++)
+		if(readings[i] != null && readings[i].lat != null && readings[i].lng != null)
+			bounds.extend(new google.maps.LatLng(readings[i].lat, readings[i].lng));
+
+	gmap.setCenter(bounds.getCenter());
+	gmap.fitBounds(bounds);
+}
+
+// Breadcrumb view for reports pages - client reports model is already populated
+function getReportBreadcrumbs() {
+	for(var i = 0; i < readings.length; i++) {
+		var id = readings[i].id;
+		var point = new google.maps.LatLng(readings[i].lat, readings[i].lng);
+		createMarker(id, point, getMarkerType(readings[i]), createReadingHtml(id), id*2);
+    if(!readings[i].start && !readings[i].stop) {
+      if (readings[i].direction) createMarker(id, point, createArrow(readings[i].direction, readings[i].speed), createReadingHtml(id), id*2+1);
+    }
+
+		if(i == 0) {
+			gmap.setCenter(point);
+			gmap.setZoom(15);
+			openInfoWindowHtml(point, createReadingHtml(id), 'reports');
+			highlightRow(id);
+		}
+	}
+}
+
+// Create html for selected reading
+function createReadingHtml(id) {
+	var reading = getReadingById(id);
+
+  var address = 'Getting Address...';
+  if(reading.address != null) {
+      address = reading.address;
+  };
+
+  var momentDate = moment(reading.full_dt, 'DD-MMM-YYYY hh:mm A');
+  var date = momentDate.format('DD MMM');
+  var year = momentDate.format('YYYY');
+  var time = momentDate.format('hh:mm');
+  var amPm = momentDate.format('a');
+	var html =
+    '<div class="tt_container">' +
+      '<div class="tt_container__sidebar tt_container__sidebar--small">' +
+        '<div class="tt_container__sidebar__date_container tt_container__sidebar__date_container--small">' +
+          '<span class="infobox__date">' + date +'</span><br />' +
+          '<span class="infobox__date">' + year +'</span><br />' +
+          '<span class="infobox__date--bold">' + time +'</span><span class="infobox__date--small">' + amPm + '</span><br />' +
+        '</div>' +
+      '</div>' +
+      '<div class="tt_container__body tt_container__body--small">' +
+        '<span class="tt_container__body__text-small">' +
+    		  address +
+        '</span><br />' +
+        '<div class="tt_container__body__text-small">' +
+				  speedAndDirectionHtml(reading) + ' ' +
+				  geofenceHtml(reading) +
+				'</div><br />';
+
+     if(reading.device_phone_number != undefined && reading.device_phone_number != '')
+         html += '<span><a href="tel:' + reading.device_phone_number + '">Call ' + reading.device_phone_number + '</span><br />';
+
+	html += "</div><div class='clearfix'></div></div>";
+
+	return html;
+}
+
+function createMarker(id, point, icon, html, zIndex, mouseover) {
+
+  var image = typeof icon === 'string' ?
+    { url: icon, scaledSize: new google.maps.Size(28, 39) } : icon;
+
+	var marker = new google.maps.Marker({
+		position: point,
+		zIndex: zIndex,
+		icon: image,
+		title: mouseover
+	});
+	marker.id = id; // Assign a unique id to the marker
+	marker.setMap(gmap);
+
+	google.maps.event.addDomListener(marker, "click", function() {
+		centerMapOnReading(id)
+		highlightRow(id);
+	});
+
+	if(window.deviceLookupHash == null)
+		window.deviceLookupHash = {};
+
+	window.deviceLookupHash[marker.id] = marker;
+
+	return marker;
+}

@@ -1,0 +1,94 @@
+<div class="page-header">
+  <div class="page-header__title-container">
+    <div class="admin-title">
+      <%= page_entries @devices %>
+    </div>
+  </div>
+  <div class="page-header__action">
+    <%= link_to('Add New Device', new_admin_device_path, title: 'Create a new device', class: "button button--primary button--large" )%>
+  </div>
+</div>
+
+<%= form_tag({action: :index}, {method: :get}) do %>
+  <div class="search-bar admin-search-bar">
+    <div class="admin-search-bar__subdomain">
+      <label class='search-bar__label'>Subdomain</label>
+      <%= text_field_tag("subdomain", params[:subdomain], class: "form-input search-bar__form__input", placeholder: "Subdomain filter...") %>
+    </div>
+    <div class='admin-search-bar__filter'>
+      <label class='search-bar__label'>Company</label>
+      <div class="admin-search-bar__select">
+        <%= select_account(params[:search]) %>
+        <i class="fa fa-caret-down form-select__arrow search-bar__arrow" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class='admin-search-bar__filter'>
+      <label class='search-bar__label'>Status</label>
+      <div class="admin-search-bar__select">
+        <%= select_tag('status', options_for_select([['All',''],['Active',1],['Inactive',0],['Deleted',2]],params[:status]), onchange: 'this.form.submit()', class: "form-select width--full").html_safe %>
+        <i class="fa fa-caret-down form-select__arrow search-bar__arrow" aria-hidden="true"></i>
+      </div>
+    </div>
+    <div class="admin-search-bar__search-box-container">
+      <label class='search-bar__label'>Name or IMEI</label>
+      <% search_params = params[:search] ? params[:search][:name_or_imei_cont] : "" %>
+      <%= text_field_tag("search[name_or_imei_cont]", search_params, class: "form-input search-bar__form__input", placeholder: "Search name or IMEI...") %>
+      <%= submit_tag("Search", class: "button button--primary button--large admin-search-bar__button") %>
+    </div>
+  </div>
+<% end %>
+
+<%= render partial: '/layouts/flash_message' %>
+
+<% if @devices.empty? %>
+  <%= render partial: '/shared/search_empty_state', locals: { text: 'No devices found.' } %>
+<% else %>
+  <div class="table-wrapper">
+    <table class="panel_table devices-panel-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Device ID</th>
+          <th>Company</th>
+          <th>Subdomain</th>
+          <th>Status</th>
+          <th>Last Online</th>
+          <th>Last Report</th>
+          <th>Created</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @devices.each do |device| %>
+          <tr>
+            <td class="table-limit-width ellipsis"><%= device.name %></td>
+            <td class="table-limit-width ellipsis" title="<%= device.properties.label %>"><%= device_imei_or_link(device) %></td>
+            <td><%= device.account ? link_to(device.account.company, home_act_as_if_account_path(new_account_id: device.account.id), target: '_blank') : 'No Account' %></td>
+            <td><%= device.account ? device.account.subdomain : 'No Account' %></td>
+            <td<% if device.provision_status_id == ProvisionStatus::STATUS_DELETED %> class="faded_red"<% end %>><% if device.provision_status_id == ProvisionStatus::STATUS_INACTIVE %>INACTIVE<% elsif device.provision_status_id == ProvisionStatus::STATUS_ACTIVE %>ACTIVE<% elsif device.provision_status_id == ProvisionStatus::STATUS_DELETED %>DELETED<% else %>UNKNOWN<% end %></td>
+            <td<%= billing_age_style(device.last_online_time) %>><%= device.last_online_time ? display_local_dt(device.last_online_time) : 'N/A' %></td>
+            <td<%= billing_age_style(device.last_gps_reading&.recorded_at) %>><%= device.last_gps_reading ? display_local_dt(device.last_gps_reading.recorded_at) : '<strong>No Report Yet</strong>'.html_safe %></td>
+            <td><%= device.created_at.nil? ? 'N/A' : display_local_dt(device.created_at) %></td>
+            <td>
+              <div class="table-actions">
+                <%= link_to edit_admin_device_path(device.id), title: 'Edit Device' do %>
+                  <i class="fa fa-pencil link-icon" aria-hidden="true"></i>
+                <% end %>
+                <%= link_to admin_device_path(device.id), method: 'delete', title: 'Delete device', data: { confirm: 'Are you sure?' } do %>
+                  <i class="fa fa-trash link-icon"></i>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= render partial: '/layouts/pagination', locals: { data: @devices } %>
+<% end %>
+
+<script type="text/javascript">
+  window.onload = function() {
+    $("#search_name_or_imei_cont").focus();
+  };
+</script>

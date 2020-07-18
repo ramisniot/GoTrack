@@ -1,0 +1,72 @@
+<div class="show-maintenance">
+  <div class="page-title">
+    <%= link_to '<i class="fa fa-arrow-left show-maintenance__back-arrow" aria-hidden="true">'.html_safe, maintenances_path %></i>
+    Maintenance Task for <%= @maintenance.device.name %>
+  </div>
+
+  <%= render partial: "/layouts/flash_message" %>
+
+  <div class='form show-maintenance-form'>
+    <div class="form-row form-row--flex show-maintenance-form__row">
+      <div class="form-label form-label--title show-maintenance-form__label">
+        Description
+      </div>
+      <div class="show-maintenance-form__data">
+        <%= @maintenance.description_task %>
+      </div>
+    </div>
+    <br/>
+    <div class="form-row form-row--flex show-maintenance-form__row">
+      <div class="form-label form-label--title show-maintenance-form__label">
+        Creation Date
+      </div>
+      <div class="show-maintenance-form__data">
+        <%= @maintenance.created_at.in_time_zone(current_user.time_zone).strftime("%b %d, %Y") %>
+      </div>
+    </div>
+    <br/>
+    <div class="form-row form-row--flex show-maintenance-form__row">
+      <div class="form-label form-label--title show-maintenance-form__label">
+        <%= @maintenance.is_mileage? ? 'Target Mileage' : 'Scheduled Date' %>
+      </div>
+      <div class="show-maintenance-form__data">
+        <%= @maintenance.is_mileage? ? pluralize(@maintenance.mileage, 'mile') : @maintenance.scheduled_time.try(:strftime, "%b %d, %Y") %>
+      </div>
+    </div>
+    <br/>
+    <div class="form-row form-row--flex show-maintenance-form__row">
+      <div class="form-label form-label--title show-maintenance-form__label">
+        Status
+      </div>
+      <div class="show-maintenance-form__data _<%= status_string(@maintenance.status).gsub(/ /, '').downcase %>">
+        <%= status_string(@maintenance.status) %>
+      </div>
+    </div>
+    <br/>
+    <% if @maintenance.is_completed? %>
+        <div class="form-row form-row--flex show-maintenance-form__row">
+          <div class="form-label form-label--title show-maintenance-form__label">
+            Completed at
+          </div>
+          <div class="show-maintenance-form__data">
+            <%= @maintenance.completed_at.in_time_zone(current_user.time_zone).strftime("%b %d, %Y - %H:%M") %>
+          </div>
+        </div>
+        <br/>
+    <% end %>
+    <div class="form-row form-row--flex show-maintenance-form__row">
+        <% unless @maintenance.is_completed? %>
+           <% if view_user_and_unauthorized?('maintenances', 'reset') %>
+            <div class="button button--secondary button--inline">Reset Task</div>
+          <% else %>
+            <%= link_to('Reset Task', reset_maintenance_path(@maintenance), class: 'button button--primary button--large button--inline show-maintenance-form__reset') %>
+          <% end %>
+          <% if view_user_and_unauthorized?('maintenances', 'complete') %>
+           <div class="button button--secondary button--inline">Complete Task</div>
+         <% else %>
+           <%= link_to('Complete Task', complete_maintenance_path(@maintenance), :method => :post, class: 'button button--primary button--large button--inline') %>
+         <% end %>
+        <% end %>
+    </div>
+  </div>
+</div>

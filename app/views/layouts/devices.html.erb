@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <% if browser.device.mobile? || browser.device.tablet? %>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+    <% end %>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <%= csrf_meta_tag %>
+    <title><%= @page_title %></title>
+
+    <%= render partial: 'layouts/includes/map_key' %>
+
+    <%= stylesheet_link_tag 'application' %>
+    <%= javascript_include_tag 'application' %>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+  </head>
+
+  <body>
+    <%= render partial: 'layouts/includes/header' %>
+
+    <div class="devices">
+      <%= render partial: 'layouts/includes/switch_account', locals: { path: request.fullpath } %>
+      <%= yield %>
+    </div>
+
+    <%= render partial: 'layouts/includes/footer' %>
+  </body>
+</html>

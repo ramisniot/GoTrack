@@ -1,0 +1,259 @@
+@import "constants";
+@import "colors";
+@import "media_queries_breakpoints";
+
+$form-content-width: 92%;
+
+.html_login {
+  height: 100%;
+}
+
+.login {
+  background-image: url(asset-path("bg-login.jpg"));
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100%;
+  margin: auto;
+
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+}
+
+.login-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.login-form-wrapper {
+  width: 300px;
+  position: relative;
+  margin-bottom: 5%;
+
+  @media #{$tablets} {
+    width: 650px;
+  }
+
+  @media #{$laptops} {
+    width: 400px;
+  }
+}
+
+.login__logo {
+  margin-top: 16%;
+  width: 200px;
+  height: 60px;
+  margin-bottom: $base-spacing-unit;
+
+  @media #{$tablets} {
+    width: 300px;
+    margin-bottom: 40px;
+  }
+
+  & img {
+    width: 100%;
+    height: auto;
+  }
+}
+
+.login__btn {
+  text-align: center;
+  text-decoration: none;
+  -webkit-appearance: none;
+  border-radius: 2px;
+  color: $color-white !important;
+  background-color: $color-azure-blue !important;
+  height: 33px;
+  font-size: 13px !important;
+  font-weight: 300 !important;
+  margin-top: 5px;
+  width: 49%;
+  line-height: 33px;
+
+  &--right {
+    float: right;
+    margin-left: 2%;
+  }
+
+  @media #{$tablets} {
+    height: 50px;
+    font-size: 20px !important;
+    line-height: 50px;
+  }
+}
+
+.login__link {
+  text-decoration: none;
+  color: $color-havelock-blue !important;
+
+  @media #{$tablets} {
+    font-size: 18px !important;
+  }
+
+  &__right {
+    margin-left: $base-spacing-unit;
+
+    &:hover {
+      color: $color-astronaut-blue !important;
+    }
+  }
+}
+
+.login-form {
+  padding: 5%;
+  border-radius: 4px;
+  background-color: $color-white;
+  width: 90%;
+  line-height: 30px;
+  box-shadow: 0px 3px 20px -5px $color-black;
+
+  @media #{$tablets} {
+    line-height: 50px;
+  }
+}
+
+.login-form__table {
+  margin: 2% 0 0 4%;
+  width: $form-content-width;
+  border-spacing: 0px;
+
+  & th {
+    font-size: 17px;
+    font-weight: 400;
+    text-align: left;
+    padding-bottom: 5px;
+    color: $color-black;
+
+    @media #{$tablets} {
+      font-size: 30px;
+    }
+  }
+
+  & td {
+    width: 100%;
+    padding: 0 0 12px 0;
+
+    input[type="checkbox"] {
+      vertical-align: middle;
+    }
+  }
+
+  & input {
+    font-family: Roboto, Arial, Helvetica, sans-serif;
+    background-color: $color-pearl;
+    border: none;
+    font-size: 13px;
+    font-weight: 300;
+    padding: 0 10px 0 10px;
+    box-sizing: border-box;
+
+    @media #{$tablets} {
+      font-size: 20px;
+    }
+  }
+}
+
+.login-form__input {
+  width: 100%;
+  height: 30px;
+  background-color: $color-pearl;
+
+  @media #{$tablets} {
+    height: 50px;
+  }
+}
+
+.login__text-small {
+  font-weight: 300;
+  color: $color-tundora-gray;
+
+  @media #{$tablets} {
+    font-size: 18px;
+  }
+}
+
+.user_remember_me {
+  @media #{$tablets} {
+    height: 25px;
+    width: 25px;
+  }
+}
+
+.login__special_message {
+  min-width: 285px;
+  width: 80%;
+  text-align: center;
+  border-radius: 5px;
+  padding: 2%;
+  background-color: $color-danube-blue;
+  min-height: 55px;
+  line-height: 22px;
+  box-shadow: 0px 3px 20px -5px $color-black;
+  margin-bottom: 5%;
+
+  @media #{$laptops} {
+    width: 525px;
+  }
+
+  &__text {
+    color: $color-white;
+    font-family: Roboto;
+    font-weight: 300;
+    font-size: 12pt;
+
+    @media #{$tablets} {
+      font-size: 20px;
+    }
+  }
+}
+
+.login_flash_message {
+  width: $form-content-width;
+  line-height: 23px;
+  border-radius: 5px;
+  text-align: center;
+  list-style: none;
+  color: $color-white;
+  font-size: 14px;
+  padding: 8px;
+
+  &--error {
+    background-color: $color-sunglo-red;
+  }
+
+  &--success {
+    background-color: $color-apple-green;
+  }
+
+  @media #{$tablets} {
+    height: 50px;
+    font-size: 20px;
+    line-height: 50px;
+  }
+}
+
+/* Placeholder modifier browser specific */
+
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: $color-silver-chalice;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color: $color-silver-chalice;
+   opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color: $color-silver-chalice;
+   opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color: $color-silver-chalice;
+}
+::-ms-input-placeholder { /* Microsoft Edge */
+   color: $color-silver-chalice;
+}
+/* /placeholder */

@@ -1,0 +1,15 @@
+@import "colors";
+@import "constants";
+
+.locations {
+  width: 95%;
+  margin-bottom: 60px;
+
+  &__empty-state {
+    margin-top: 100px;
+  }
+
+  &__content {
+    margin-top: $base-spacing-unit;
+  }
+}

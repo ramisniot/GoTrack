@@ -1,0 +1,2 @@
+Dear John Smith,
+The device EJR-9127 has changed the state of Door to Close at 2015-04-04 14:00:00 +0200

@@ -1,0 +1,77 @@
+<div class="locations__content">
+  <%= render partial: '/layouts/flash_message' %>
+  <div>
+    <% if !(@geofences.nil? || @geofences.empty?) %>
+      <div class="page-header">
+        <div class="page-header__title-container">
+          <span class="page-title">
+            All Locations <% if @device %>for <%= @device.name %> <% end %>(<%= @geofences.count %> total)
+          </span>
+        </div>
+        <% unless current_user.is_read_only? %>
+          <div class="page-header__action">
+            <a href="<%= new_geofence_path %>" title="Create new location" class="button button--primary button--large">Add New Location</a>
+          </div>
+        <% end %>
+      </div>
+      <table class="panel_table">
+        <thead>
+          <tr>
+            <th colspan="3">Location</th>
+            <th colspan="3">For</th>
+            <th colspan="3">Address</th>
+            <th colspan="3">Radius / Area</th>
+    	      <th colspan="3">Notify?</th>
+            <th colspan="2"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @geofences.each do |geofence| %>
+            <% next if (geofence.device.nil? && geofence.account.nil?) || geofence.latitude.to_f.zero? %>
+            <tr>
+              <td colspan="3"><%= geofence.name %></td>
+              <td colspan="3"><%= geofence.device.nil? ? geofence.account.subdomain : geofence.device.name %></td>
+              <td colspan="3"><%= geofence.address_or_coords %></td>
+              <td colspan="3">
+                <% if geofence.polygonal? %>
+                  <%= ("%0.2f mi&sup2;" % geofence.area).html_safe unless geofence.area.nil? %>
+                <% else %>
+                  <%= "#{geofence.radius.round(2)} mi" unless geofence.radius.nil? %>
+                <% end %>
+     		      </td>
+
+              <td colspan="3"><%= geofence.notify_enter_exit ? 'yes' : 'no' %></td>
+              <td colspan="2">
+                <div class="table-actions">
+                  <% unless current_user.is_read_only? %>
+                    <a href="<%= edit_geofence_path(geofence.id)%>">
+                      <i class="fa fa-pencil link-icon" title="Edit"></i>
+                    </a>
+                    <%= link_to geofence_path(geofence.id), method: :delete, data: { confirm: 'Are you sure you want to delete this location?' } do %>
+                      <i class="fa fa-trash link-icon" title="Delete"></i>
+                    <% end %>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="locations__empty-state">
+        <div class="empty-state">
+          <div class="empty-state__logo">
+            <i class="fa fa-globe" aria-hidden="true"></i>
+          </div>
+          <div class="empty-state__button-container">
+            <a href="<%= new_geofence_path %>" title="Create new location" class="button button--primary button--large">Add New Location</a>
+          </div>
+          <div class="empty-state__text-container">
+            <span class="empty-state__text-container__title">No locations found. You can click the button above to create a new one.</span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <%= render partial: '/layouts/pagination', locals: { data: @geofences } %>
+</div>

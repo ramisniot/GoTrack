@@ -1,0 +1,29 @@
+<div class="login">
+  <div class="login-wrapper">
+    <div class="login-form-wrapper">
+
+      <div class="login__logo">
+        <%= image_tag('gotrack-logo.png') %>
+      </div>
+      <div class="login-form">
+
+        <% if request.original_url.include?('sign_in') %>
+          <%= render partial: "devise/sessions/sign_in_form" %>
+        <% end %>
+
+        <% if request.original_url.include?('password') %>
+          <%= render partial: "devise/passwords/new_password_form" %>
+        <% end %>
+
+      </div>
+
+    </div>
+
+    <% if LoginMessage.instance.is_active? && request.original_url.include?('sign_in') %>
+      <div id="special_message" class="login__special_message">
+        <div class="login__special_message__text"><%= LoginMessage.instance.to_html %></div>
+      </div>
+    <% end %>
+  </div>
+
+</div>

@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!-- Fast v2.0, (c) August 2013 -->
+<html class="html_login" >
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <%= csrf_meta_tag %>
+    <title><%= @page_title %></title>
+    <%= stylesheet_link_tag 'application' %>
+    <% if browser.device.mobile? || browser.device.tablet? %>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+    <% end %>
+
+    <%= render partial: 'layouts/includes/map_key' %>
+
+    <%= javascript_include_tag 'application' %>
+    <%= javascript_include_tag 'reports-page' %>
+    <%= javascript_include_tag 'reverse-geocoding' %>
+    <link rel="shortcut icon" href="/favicon.ico?v=2">
+    <link rel="apple-touch-icon" sizes="57x57" href="<%= image_path('apple-icon-57x57.png') %>" />
+    <link rel="apple-touch-icon" sizes="72x72" href="<%= image_path('apple-icon-72x72.png') %>" />
+    <link rel="apple-touch-icon" sizes="114x114" href="<%= image_path('apple-icon-114x114.png') %>" />
+    <link rel="apple-touch-icon" sizes="144x144" href="<%= image_path('apple-icon-144x144.png') %>" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+  </head>
+
+  <body onload="load();">
+    <% if request.original_url.exclude?('sign_in') %>
+      <%= render partial: 'layouts/includes/header' %>
+    <% end %>
+
+    <div id="content" class="content">
+      <%= yield %>
+    </div>
+
+    <%= render partial: 'layouts/includes/footer' %>
+  </body>
+</html>

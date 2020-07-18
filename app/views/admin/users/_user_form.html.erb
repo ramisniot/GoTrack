@@ -1,0 +1,77 @@
+<div class="form">
+  <div class="form-row form-row--flex form__row">
+    <div class="form-row form-row--inline">
+      <label class="form-label form-label--title">First Name *</label>
+      <input type="text" class="form-input form-input--full-width form__input" name="user[first_name]" id="first_name" value="<%= @user.first_name %>" />
+    </div>
+
+    <div class="form-row form-row--inline">
+      <label class="form-label form-label--title">Email *</label>
+      <input type="text" class="form-input form-input--full-width form__input" name="user[email]" title="Email" id="email" value="<%= @user.email %>" />
+    </div>
+  </div>
+
+  <div class="form-row form-row--flex form__row">
+    <div class="form-row form-row--inline">
+      <label class="form-label form-label--title">Last Name *</label>
+      <input type="text" class="form-input form-input--full-width form__input" name="user[last_name]" value="<%= @user.last_name %>" />
+    </div>
+
+    <div class="form-row form-row--inline">
+      <label class="form-label form-label--title">Account *</label>
+      <div class="form-select-wrapper form__input">
+        <select class="form-input form-input--full-width form-select" name="user[account_id]">
+          <option value="">Choose Account</option>
+    			<% @accounts.each do |account| %>
+    				<option value="<%= account.id %>" <% if @user.account_id.to_s == account.id.to_s %>selected="selected"<% end %>><%= account.company %></option>
+    			<% end %>
+    		</select>
+        <i class="fa fa-caret-down form-select__arrow " aria-hidden="true"></i>
+      </div>
+    </div>
+  </div>
+
+  <% unless @user.id %>
+    <div class="form-row form-row--flex form__row">
+      <div class="form-row form-row--inline">
+        <label class="form-label form-label--title">Password *</label>
+        <input type="password" class="form-input form-input--full-width form__input" name="user[password]" value="<%= @user.password %>" />
+      </div>
+
+      <div class="form-row form-row--inline">
+        <label class="form-label form-label--title">Confirm Password *</label>
+        <input type="password" class="form-input form-input--full-width form__input" name="user[password_confirmation]" />
+      </div>
+    </div>
+  <% end %>
+
+    <% unless @user.is_super_admin? %>
+      <div class="form-row form-row--flex form__row">
+        <div class="form-row form-row--inline">
+          <label class="form-label form-label--title">Permission Level</label>
+          <div class="form-select-wrapper form__input">
+            <%= select :user, :role, options_for_roles(current_user.assignable_roles), {}, { class: "form-input form-input--full-width form-select" } %>
+            <i class="fa fa-caret-down form-select__arrow " aria-hidden="true"></i>
+          </div>
+        </div>
+
+        <div class="form-row form-row--inline form__input">
+          <div class="form-actions-spacing">
+            <input type="submit" value="Save" class="button button--primary button--large button--inline button--right"/>
+            <%= link_to 'Cancel', admin_users_path, class: "button button--secondary button--inline button--right" %>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="form-row form-row--flex form__row">
+        <div class="form-row form-row--inline form-row--actions">
+          <input type="submit" value="Save" class="button button--primary button--large button--inline button--right"/>
+          <%= link_to 'Cancel', admin_users_path, class: "button button--secondary button--inline button--right" %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if params[:id] %>
+      <input type="hidden" name="id" value="<%= params[:id] %>" />
+    <% end %>
+</div>

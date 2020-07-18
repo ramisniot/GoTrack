@@ -1,0 +1,103 @@
+@import "constants";
+@import "colors";
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: $base-spacing-unit;
+  height: 30px;
+  width: 100%;
+
+  &__title-container {
+    margin: 0px 0px;
+    margin-top: 4px;
+  }
+
+  &__action {
+    margin: 0px 0px;
+  }
+}
+
+.page-title {
+  font-family: Roboto;
+  font-weight: 300;
+  font-size: 21px;
+}
+
+.page-container {
+  width: 95%;
+  margin-top: $base-spacing-unit;
+}
+
+.link {
+  color: $color-havelock-blue !important;
+}
+
+.dark_blue_header {
+  font-size: 16px;
+  font-weight: bold;
+  color: $color-astronaut-blue;
+}
+
+.dark_gray_header {
+  font-size: 16px;
+  color: $color-carbon-gray;
+}
+
+.input {
+  width: 162px;
+  height: 20px;
+}
+
+.content {
+  margin: 0;
+  padding:0;
+  min-height: 400px;
+  height: 100%;
+}
+
+.page_entries {
+  font-size: 18px;
+  color: $color-astronaut-blue;
+}
+
+.container {
+  width: 100%;
+  clear: both;
+}
+
+.top-head {
+  width: 100%;
+  overflow: hidden;
+  padding-top: 5px;
+  margin-bottom: $base-spacing-unit;
+
+  h3 {
+    font-size: 18px;
+    color: $color-astronaut-blue;
+    padding: 0px;
+    margin: 0px;
+    width: 70%;
+    float: left;
+  }
+}
+
+.footer {
+  border-top: 1px solid $color-silver;
+  padding: 10px 0 0 0;
+  margin: 20px;
+  text-align: center;
+  color: $color-tundora-gray;
+  font-size: 10px;
+  clear: both;
+}
+
+.act-as-if-account-form {
+  width: 310px;
+  display: inline
+}
+
+.reset {
+  clear: both;
+  height: 0px;
+}

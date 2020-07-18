@@ -1,0 +1,13 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-header__title-container">
+      <div class="page-title">
+        New Maintenance Task
+      </div>
+    </div>
+  </div>
+  <%= render partial: "/layouts/flash_message" %>
+  <%= form_for @maintenance do |f| %>
+      <%= render partial: 'fields', locals: { f: f } %>
+  <% end %>
+</div>

@@ -1,0 +1,12 @@
+location1:
+  id: 1
+  latitude: "32.8491"
+  street: "NW Chipman Rd"
+  city: "Lee's Summit"
+  state_name: "MO"
+  full_address: "Lee's Summit Jackson 20 MO NW Chipman Rd"
+  county: "Jackson"
+  street_number: "20"
+  state_abbr: "MO"
+  created_at: "2013-06-14 16:00:25"
+  updated_at: "2013-06-14 16:00:25"

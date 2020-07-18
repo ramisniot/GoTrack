@@ -1,0 +1,9 @@
+<% page_name = controller.controller_name  %>
+<div class="nav-tabs nav-tabs-admin">
+  <ul>
+    <li <% if page_name == 'overview' %> class="selected"<% end %>><a href="/admin">Overview</a></li>
+    <li <% if page_name == 'accounts' %> class="selected"<% end %>><a href="/admin/accounts">Accounts</a></li>
+    <li <% if page_name == 'users' %> class="selected"<% end %>><a href="/admin/users">Users</a></li>
+    <li <% if page_name == 'devices' %> class="selected"<% end %>><a href="/admin/devices">Devices</a></li>
+  </ul>
+</div>

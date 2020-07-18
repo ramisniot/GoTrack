@@ -1,0 +1,4 @@
+:concurrency: 1
+:queues:
+  - default
+  - idle_event_time_exceeded_notification

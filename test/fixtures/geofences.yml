@@ -1,0 +1,52 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+fenceOne:
+  id: 1
+  device_id: 1
+  name: home
+  latitude: 32.833785
+  longitude: -96.756807
+  radius: 0.25
+  account_id: 1
+  notify_enter_exit: true
+  
+fenceTwo:
+  id: 2
+  device_id: 1
+  name: work
+  latitude: 31.940955
+  longitude: -91.822224
+  radius: 0.25
+  account_id: 1
+  notify_enter_exit: true
+ 
+fenceThree:
+  id: 3
+  device_id: 1
+  name: work
+  latitude: 32.944955
+  longitude: -96.823224
+  radius: 0.25
+  account_id: 1
+  notify_enter_exit: true
+
+fenceFour:
+  id: 4
+  device_id: 0
+  name: School
+  latitude: 32.79772761964288
+  longitude: -79.96037364006042
+  radius: 0.1
+  account_id: 1
+  notify_enter_exit: true
+  
+fenceFive:
+  id: 5
+  device_id: 8
+  name: School
+  latitude: 32.79772761964288
+  longitude: -79.96037364006042
+  radius: 0.25
+  account_id: 0
+  notify_enter_exit: true
+ 
+ 

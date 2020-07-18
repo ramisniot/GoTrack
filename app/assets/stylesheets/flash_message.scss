@@ -1,0 +1,83 @@
+@import "colors";
+@import "constants";
+
+$box-transition: -500px;
+
+.flash-message-box {
+  position: absolute;
+  top: 105px;
+  right: $box-transition;
+  background-color: $color-white;
+  box-shadow: 1px 2px 10px 0px $color-dust-gray;
+  width: 400px;
+  min-height: 54px;
+  text-align: center;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  transform: translateX(0);
+  border-radius: 3px;
+
+  &--enter {
+    transform: translateX($box-transition - 10px);
+    transition: all 1s ease-in-out;
+  }
+
+  &--leave {
+    transform: translateX(-$box-transition + 10px);
+    transition: all 1s ease-in-out;
+  }
+
+  &--disappear {
+    display: none;
+  }
+}
+
+.flash-message-icon {
+  flex: 2;
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+
+  &--error {
+    background-color: $color-cabaret-red;
+  }
+
+  &--success {
+    background-color: $color-apple-green;
+  }
+
+  &__icon {
+    color: $color-white;
+    font-size: 22px !important;
+  }
+}
+
+.flash-message-textbox {
+  flex: 12;
+  background-color: $color-pearl;
+  font-size: 15px;
+  font-weight: 300;
+  color: $color-dust-gray;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 7px 0px 7px 10px;
+  box-sizing: border-box;
+}
+
+.flash-message-close-container {
+  flex: 1;
+  background-color: $color-pearl;
+  box-sizing: border-box;
+  padding-top: 5px;
+
+  &__icon {
+    font-size: 10px !important;
+    color: $color-dust-gray;
+    cursor: pointer;
+  }
+}

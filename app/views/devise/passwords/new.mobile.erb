@@ -1,0 +1,24 @@
+
+<% content_for :header do %>
+
+  <%= link_to 'Back', new_user_session_path(:mobile),
+                      'data-role' => 'button',
+                      'data-icon' => 'back',
+                      'data-direction' => 'reverse',
+                      'data-iconpos' => 'notext',
+                      'data-ajax' => 'false' %>
+  <h1>Change Password</h1>
+
+<% end %>
+
+<%= form_for(:user, html: { id: 'login-form', 'data-ajax' => 'false'}, url: user_password_path) do |f| %>
+
+  <%= hidden_field_tag :format, :mobile %>
+
+  <p><%= f.label :email %></p>
+  <p><%= f.text_field :email %></p>
+
+  <p><%= submit_tag 'Send Instructions' %></p>
+
+<% end %>
+

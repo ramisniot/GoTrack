@@ -1,0 +1,62 @@
+@import "colors";
+@import "constants";
+
+.confirmation-modal {
+  z-index: 2;
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 450px !important;
+  height: 250px !important;
+  display: flex !important;
+  flex-direction: column;
+  font-family: Roboto !important;
+  background-color: $color-white;
+  border-radius: 3px;
+  box-shadow: 1px 2px 50px -10px $color-black;
+
+  &__header {
+    font-size: 15px;
+    line-height: 42px;
+    padding-left: $base-spacing-unit;
+    box-sizing: border-box;
+    width: 100%;
+    background-color: $color-black;
+    color: $color-white;
+    flex: 1;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+  }
+
+  &__textbox {
+    font-size: 15px;
+    font-weight: 300;
+    flex: 4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__text {
+    display: inline-block;
+  }
+
+  &__actions {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+
+    &__container {
+      margin: 0px;
+    }
+  }
+
+  &__cancel-btn {
+    margin-right: $base-spacing-unit * 2;
+  }
+}
+
+.jquery-modal:focus {
+  outline: 0;
+}

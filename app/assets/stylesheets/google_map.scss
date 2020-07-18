@@ -1,0 +1,39 @@
+@import "constants";
+@import "colors";
+@import "media_queries_breakpoints";
+
+.googlemap {
+  width: 99%;
+  margin: 0.50%;
+  height: 380px
+}
+
+.reports_map {
+  width: 50%;
+  float: right;
+  border: 4px $color-pearl solid;
+}
+
+embed, object {
+  cursor: pointer;
+}
+
+.toggler_link {
+  top: 260px;
+  position: relative;
+}
+
+.map-holder {
+  margin-top: $base-spacing-unit * 1.25;
+  position: relative;
+  height: calc(100% - #{$base-spacing-unit * 13});
+}
+
+.map-wrapper {
+  width: 100%;
+  height: 100%;
+  float: left;
+  border-radius: 4px;
+  -webkit-transform: translate3d(0px, 0px, 0px);
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+}

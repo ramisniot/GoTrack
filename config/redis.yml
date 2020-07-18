@@ -1,0 +1,18 @@
+dev:
+  url: <%= ENV['REDIS_URL'] %>
+
+staging:
+  url: <%= ENV['REDIS_URL'] %>
+
+production:
+  url: <%= ENV['REDIS_URL'] %>
+
+development:
+  host: localhost
+  port: 6379
+  db: 14
+
+test:
+  host: localhost
+  port: 6379
+  db: 14

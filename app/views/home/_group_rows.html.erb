@@ -1,0 +1,54 @@
+<script>
+  var devices=[];
+</script>
+
+<% if @groups %>
+  <% @groups.each do |group| %>
+    <tr>
+      <td colspan="<%= column_span or 4 %>" class="overview-group-header">
+        <span class="overview-group-name">
+          <%= image_tag "icons/#{GROUP_IMAGES[group.image_value]}", class: 'overview-group-name__icon' %>
+          <%= group.name %>
+        </span>
+      </td>
+    </tr>
+    <% if !group.devices.empty? %>
+      <% devices_in_group_and_dispatchable(group, @dispatchable_devices).each do |device|%>
+        <%= raw(send(callback, device)) %>
+        <% if device.last_gps_reading %>
+          <%= add_device_js(device) %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <tr><td colspan="<%= column_span or 4 %>">No devices in this group.</td></tr>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if default_devices.any? && @show_default_devices %>
+  <% if @groups.any? || user_session[:gmap_value] == 'default' %>
+    <tr>
+      <td colspan="<%= column_span or 4 %>" class="overview-group-header">
+        <span class="overview-group-name">
+          <%= image_tag 'icons/blue_small.png', class: 'overview-group-name__icon' %>
+            Default
+        </span>
+      </td>
+    </tr>
+  <% end %>
+  <% default_devices.select{|d| @dispatchable_devices.blank? ? true : @dispatchable_devices.map(&:id).include?(d.id)}.each do |device| %>
+    <%= raw(send(callback, device)) %>
+      <% if device.last_gps_reading %>
+        <%= add_device_js(device) %>
+      <% end %>
+    <% end %>
+<% end %>
+
+<% if current_home_device and (device = Device.find(current_home_device)) %>
+  <%= raw(send(callback, device)) %>
+  <% if device.last_gps_reading %>
+    <%= add_device_js(device) %>
+  <% end %>
+<% end %>
+
+<%= render partial: '/shared/load_rgeo', locals: { frm_index: true, show_direction: false, show_phone_number: false }  %>

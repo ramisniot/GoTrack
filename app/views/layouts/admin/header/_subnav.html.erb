@@ -1,0 +1,11 @@
+<% controller = params[:controller]  %>
+<% action = params[:action]  %>
+<% controller_parts = controller.split('/') %>
+
+<% if controller_parts.length > 1 && controller_parts[0] != 'fast_commands' && controller_parts[1] != 'overview' %>
+  <div>
+    <% if controller_parts[0] != 'admin' %>
+      <%= render partial: "#{controller_parts[0]}/#{controller_parts[1]}/header" %>
+    <% end %>
+  </div>
+<% end %>

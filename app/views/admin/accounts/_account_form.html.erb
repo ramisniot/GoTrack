@@ -1,0 +1,71 @@
+<div class="form">
+  <div class="form-row form-row--flex form__row">
+    <div class="form-row form-row--inline">
+      <div class="form-label form-label--title">Subdomain * </div>
+      <input type="text" class="form-input form-input--full-width" name="account[subdomain]" id="subdomain" size="20"	value="<%= @account.subdomain %>"/>
+    </div>
+
+    <div class="form-row form-row--inline">
+      <div class="form-label form-label--title"> Company * </div>
+      <input type="text" class="form-input form-input--full-width" name="account[company]" value="<%= @account.company %>" size="20"/>
+    </div>
+  </div>
+
+  <div class="form-row form-row--flex form__row">
+    <div class="form-row form-row--inline">
+      <div class="form-label form-label--title">Contact Name</div>
+      <input type="text" class="form-input form-input--full-width" name="account[contact_name]" value="<%= @account.contact_name %>" size="20"/>
+    </div>
+
+    <div class="form-row form-row--inline">
+      <div class="form-label form-label--title">Contact Email</div>
+      <input type="text" class="form-input form-input--full-width" name="account[contact_email]" value="<%= @account.contact_email %>" size="20" />
+    </div>
+  </div>
+
+  <div class="form-row form-row--flex form__row">
+    <div class="form-row form-row--inline">
+      <div class="form-label form-label--title">Contact Phone</div>
+      <input type="text" class="form-input form-input--full-width" name="account[contact_phone]" value="<%= @account.contact_phone %>" size="20"/>
+    </div>
+  </div>
+
+  <div class="form-row form-row--flex form__row">
+    <div class="form-row form-row--inline">
+      <div class="form-label form-label--title">Speed Limit</div>
+      <input type="text" class="form-input form-input--small-width" name="account[max_speed]" value="<%= @account.max_speed %>" size="20"/>
+      <div class="form__field-tag">MPH</div>
+    </div>
+
+    <div class="form-row form-row--inline">
+      <div class="form-double-checkbox">
+        <input class="form-checkbox-input" type="checkbox" class="input" name="options[show_maintenance]" <%if @account.show_maintenance %> checked <% end %> />
+        <span class='form-label form-label--title'>Show Maintenance?</span>
+      </div>
+      <div class="form-double-checkbox">
+        <input class="form-checkbox-input" type="checkbox" class="input" name="options[show_state_mileage_report]" <%if @account.show_state_mileage_report %> checked <% end %> />
+        <span class='form-label form-label--title'>Show State Mileage Report?</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-row form-row--flex form__row">
+    <div class="form-row form-row--inline">
+      <div class="form-label form-label--title">Default Map Center (lat, lng)</div>
+      <input type="text" class="form-input form-input--small-width" name="account[default_map_latitude]" value="<%= @account.default_map_latitude %>" size="20" />
+      <div class="form__field-tag"> , </div>
+      <input type="text" class="form-input form-input--small-width" name="account[default_map_longitude]" value="<%= @account.default_map_longitude %>" size="20" />
+    </div>
+  </div>
+
+  <div class="form-row form-row--flex form__row">
+    <div class="form-row form-row--inline form-row--actions">
+      <input class='button button--primary button--large button--inline button--right' type="submit" value="Save" />
+      <%= link_to 'Cancel', admin_accounts_path, class: "button button--secondary button--inline button--right" %>
+    </div>
+  </div>
+
+  <% if params[:id] %>
+    <input type="hidden" name="id" value="<%= params[:id] %>" />
+  <% end %>
+</div>

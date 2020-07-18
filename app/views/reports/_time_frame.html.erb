@@ -1,0 +1,49 @@
+
+<div class="search-bar__form__field-group">
+  <div class="search-bar__form__field">
+    <div class="search-bar__form__check-option">
+      <%= check_box(:time_frame, :set_time_frame) %>
+      <span class="search-bar__form__check-option__text">Set Time Frame</span>
+    </div>
+  </div>
+  <div class="search-bar__form__field search-bar__form__field--margin-small">
+    <span class="time-frame">
+      <%= time_select_with_arrow(:time_frame, :start_time, { minute_step: 30, ampm: true, ignore_date: true }, { class: 'form-select' }) %>
+      <%= select(:time_frame, :time_duration, options_for_select(for_hours), {}, class: 'form-select') %>
+      <i class="fa fa-caret-down form-select__arrow"></i>
+    </span>
+  </div>
+</div>
+
+
+<script>
+  $(document).ready(function() {
+    set_time_frame_defaults();
+    assess_time_frame();
+  });
+
+  $("#time_frame_set_time_frame").change(function(){
+    assess_time_frame();
+  });
+
+  function assess_time_frame() {
+    var time_frame = $("#time_frame_set_time_frame").prop('checked');
+    if (time_frame) {
+      $(".days-only").hide();
+      $(".time-frame").show();
+    }
+    else {
+      $(".time-frame").hide();
+      $(".days-only").show();
+    };
+  };
+
+  function set_time_frame_defaults() {
+    if (<%= !params[:time_frame].blank? %>) {
+      $("#time_frame_set_time_frame").prop('checked', <%= (params[:time_frame][:set_time_frame] == "1") %>)
+      $("#time_frame_start_time_4i").val("<%= params[:time_frame]["start_time(4i)"] %>")
+      $("#time_frame_start_time_5i").val("<%= params[:time_frame]["start_time(5i)"] %>")
+      $("#time_frame_time_duration").val(<%= params[:time_frame][:time_duration] %>)
+    };
+  };
+</script>

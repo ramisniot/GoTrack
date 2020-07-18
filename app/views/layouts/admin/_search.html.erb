@@ -1,0 +1,15 @@
+<div class="search-bar admin-search-bar">
+  <div class="admin-search-bar__container admin-search-bar__container--no-label">
+    <%= form_tag({ action: :search }, { method: :get }) do -%>
+      <%= text_field_tag :keyword_search, @keyword_search, class: "form-input", id: "search_field", placeholder: 'Search...' %>
+      <% if params[:search] %>
+        <input type="hidden" name="search[account_id_eq]" value="<%= params[:search][:account_id_eq] %>" />
+      <% end %>
+      <%= submit_tag 'Search', class: "button button--primary button--large admin-search-bar__button"  %>
+    <% end -%>
+  </div>
+</div>
+
+<script type="text/javascript">
+  document.getElementById("search_field").focus();
+</script>

@@ -1,0 +1,89 @@
+<%= render partial: '/shared/load_rgeo', locals: { frm_index: false, show_direction: true, show_phone_number: false } %>
+
+<div class="search-bar reports-header leg-detail__search-bar">
+  <%= form_tag(action_reports_path(params[:action], @device.id), method: 'get', class: 'search-bar__form width--full') do %>
+    <div class="seach-bar__form__fields leg-detail__form-fields">
+      <div class="search-bar__form__field leg-detail__form-field">
+        <label class="search-bar__label leg-detail__label">For</label>
+        <%= @device.name %>
+      </div>
+      <div class="search-bar__form__field">
+        <label class="search-bar__label leg-detail__label">From</label>
+        <%= @leg.reading_start.short_address %>
+      </div>
+
+      <% if @leg.reading_stop %>
+        <div class="search-bar__form__field">
+          <label class="search-bar__label leg-detail__label">To</label>
+          <%= @leg.reading_stop.short_address %>
+        </div>
+        <div class="search-bar__form__field">
+          <label class="search-bar__label leg-detail__label">Duration</label>
+          <%= minutes_to_hours(@leg.duration) %>
+        </div>
+      <% else %>
+        <div class="search-bar__form__field">
+          <label class="search-bar__label">In Progress</label>
+          <%
+            start_time = @leg.reading_start.recorded_at.to_i
+            end_time = Time.now.to_i
+            duration = (end_time - start_time) / 60
+          %>
+          <%= minutes_to_hours(duration) %>
+        </div>
+      <% end %>
+
+    </div>
+
+    <% if @record_count > 0 %>
+      <div class="search-bar__form__actions leg-detail__actions">
+        <div class="search-bar__form__action">
+          <%= link_to 'Export', action_reports_path('export', params[:id], type: params[:action]), class: 'button button--primary', target: '_blank', title: "Export #{@record_count} readings for selected timeframe in CSV format" %>
+          <% if params[:action] == 'all' %>
+              | <a href="/readings/last/<%= @device.id %>" target="_blank">
+                  <%= image_tag('georss.png', border: 0, title: "Export this device's most recent location into your favorite RSS or GeoRSS reader", style: 'vertical-align: text-bottom;') %>
+                </a>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<div class="reports-content" id="main_table">
+  <div id="left_panel" class="reports-content__left">
+    <% if @readings.empty? %>
+      <%= render partial: 'empty_state', locals: { message: 'No readings found.' } %>
+    <% else %>
+      <table class="panel_table">
+        <tr>
+          <th>Location</th>
+          <th>Speed (mph)</th>
+          <th>Event Type</th>
+          <th>When</th>
+        </tr>
+        <% previous_datetime = nil %>
+        <% for reading in @readings %>
+          <tr id="row<%= reading.id %>">
+            <td>
+              <%= standard_location(@device,reading) %>
+              <% unless reading.short_address==', '%>
+                <a href="javascript:centerMapOnReading(<%= reading.id %>);highlightRow(<%= reading.id %>)" title="Center map on this location" >(map it)</a>
+              <% end %>
+            </td>
+            <td><%= reading.speed %></td>
+            <td><%= render partial: 'event_display', locals: { reading: reading } %></td>
+            <td><%= standard_date_and_time(reading.recorded_at,previous_datetime) %></td>
+            <% previous_datetime = reading.recorded_at %>
+          </tr>
+          <%= javascript_tag do %>
+            updateReadingForTrip(<%= reading.id %>, <%= reading.id == @leg.reading_start_id %>, <%= reading.id == @leg.reading_stop_id %>);
+          <% end %>
+        <% end %>
+      </table>
+    <% end %>
+  </div>
+  <%= render partial: 'map_and_toggler', locals: { with_toggler: true } %>
+</div>
+
+<%= render partial: 'report_footer', locals: { entities: @readings } %>

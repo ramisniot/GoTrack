@@ -1,0 +1,154 @@
+<div class="geofences-form">
+  <div class="geofences-form-data">
+    <%= render partial:"/layouts/flash_message" %>
+    <%= form_for @geofence, :html => {:id => 'geofence_form', :onsubmit => 'return validate()'} do |f|%>
+      <div class="form-row">
+        <div class="form-label form-label--title">Name</div>
+        <%= f.text_field :name, class: 'form-input', maxlength: Geofence::MAX_LENGTH[:name] %>
+      </div>
+
+      <div class="form-row">
+        <div class="form-label form-label--title">Level</div>
+        <% device_level = @geofence.device_id.to_i > 0 %>
+        <div class="form-option">
+          <input type="radio" id="radio_1" name="radio" value="1" <% if !device_level %>checked="checked"<%end%> onclick="$('#device_dropdown').hide()" />
+          <label for="radio_1" class="form-label">Account</label>
+        </div>
+        <div class="form-option">
+          <input type="radio" id="radio_2" name="radio" value="2" <% if device_level %>checked="checked"<%end%> onclick="$('#device_dropdown').show()" />
+          <label for="radio_2" class="form-label">Device</label>
+        </div>
+      </div>
+
+      <input type="hidden" name="geofence[account_id]" id="geofence_account_id" value="<%= current_account.id %>" />
+
+      <div id="device_dropdown" style="display: <%= device_level ? 'block' : 'none' %>" class="form-row">
+        <div class="form-label">Choose a device</div>
+        <div class="form-select-wrapper">
+          <%= f.select :device_id, options_from_collection_for_select(@devices.provisioned, :id, :name, @geofence.device_id), {}, { class: 'form-select' } %>
+          <i class="fa fa-caret-down form-select__arrow geofences-form__arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-label form-label--title">Color</div>
+        <div class="form-select-wrapper">
+          <%= f.select :color, @colors, {}, { onchange: 'drawGeofence()', class: 'form-select' } %>
+          <i class="fa fa-caret-down form-select__arrow geofences-form__arrow" aria-hidden="true"></i>
+        </div>
+    </div>
+
+      <div class="form-row">
+        <div class="form-option">
+          <%= f.check_box :notify_enter_exit %>
+          <%= f.label :notify_enter_exit, 'Send notification when you enter/exit this location?', class: 'form-label' %>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-option">
+          <%= f.radio_button :shape_type, Geofence::SHAPE_CIRCULAR, onclick: "switchTo('circular')", checked: !@geofence.polygonal? %>
+          <%= f.label :shape_type, 'Circular', value: Geofence::SHAPE_CIRCULAR, class: 'form-label' %>
+        </div>
+        <div class="form-option">
+          <%= f.radio_button :shape_type, Geofence::SHAPE_POLYGONAL,  onclick: "switchTo('polygonal')", checked: @geofence.polygonal? %>
+          <%= f.label :shape_type, 'Polygonal', value: Geofence::SHAPE_POLYGONAL, class: 'form-label' %> </div>
+        </div>
+
+        <div class="form-separator"></div>
+
+        <div class="location-fields">
+          <div class="form-row">
+            <div class="form-label form-label--title">Address</div>
+            <%= text_field_tag_with_hint(
+              :geofence_address,
+              Geofence::DEFAULT_ADDRESS_TEXT,
+              {
+                class: 'form-input',
+                name: 'geofence[address]',
+                value: @geofence.address,
+                onkeypress: "if(address_modified==false){$('#geofence_latitude').val(''); $('#geofence_longitude').val(''); address_modified = true;}",
+                onchange: "$('#zoom_to').val($(this).val()); window.geocode_button_needs_clicking = true;"
+              }
+            )%>
+          </div>
+          <div class="form-row">
+            <%= button_to_function('Zoom Map to Address', "geocode($('#geofence_address').val(), false);", class: 'button button--primary button--large geofences__btn') %>
+          </div>
+          <div class="circular_fields" style="display: <%= @geofence.polygonal? ? 'none' : 'block' %>">
+            <div class="form-row">
+              <div class="form-label form-label--title">Radius (miles)</div>
+              <% selected_radius = 0.5 %>
+              <% selected_radius = Geofence::RADII.find{|x| x >= @geofence.radius} if @geofence.radius.to_f > 0.0 %>
+              <% selected_radius = Geofence::RADII.last if @geofence.radius.to_f > Geofence::RADII.last %>
+              <div class="form-select-wrapper">
+                <%= f.select(:radius, Geofence::RADII, { selected: selected_radius }, { onchange: 'drawGeofence()', class: 'form-select' })%>
+                <i class="fa fa-caret-down form-select__arrow geofences-form__arrow" aria-hidden="true"></i>
+              </div>
+
+            </div>
+            <p class="geofences-form__instructions">
+              When you enter an address OR Latitude,Longitude manually,
+              be sure to click the "Zoom Map to Address" button to confirm
+              that the location is understood correctly.
+              Due to the accuracy and resolution of GPS technology, it is recommended that you draw your location with at least 100 feet of margin outside of the space that you want to cover.  This will help prevent "false" exiting of a location due to GPS drifting over time.
+              It is also recommended that you not create location spaces smaller than 100 feet on any one side.
+            </p>
+
+            <%= f.hidden_field :latitude %>
+            <%= f.hidden_field :longitude %>
+          </div>
+
+          <div class="polygonal_fields" style="display: <%= @geofence.polygonal? ? 'block' : 'none' %>">
+            <%= f.hidden_field :polypoint_string %>
+            <%= f.hidden_field :area %>
+            <p class="geofences-form__instructions">
+              * When you enter an address OR Latitude,Longitude manually,
+              be sure to click the "Zoom Map to Address" button to confirm
+              that the location is understood correctly.
+              <br>
+              * Due to the accuracy and resolution of GPS technology, it is recommended that you draw your location with at least 100 feet of margin outside of the space that you want to cover.  This will help prevent "false" exiting of a location due to GPS drifting over time.
+              <br>
+              * It is also recommended that you not create location spaces smaller than 100 feet on any one side.
+              <br>
+              * Click a series of points to define the boundary of your geofence.
+              <br>
+              * Be sure to click the marker from the first point to "close" the shape.
+              <br>
+              * Click Start Over to draw a new shape, or to clear the shape that is already drawn.
+            </p>
+            <div class="form-row">
+              <%= button_to_function('Start Over', 'clearPoints()', class: 'button button--primary geofences__btn') %>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-separator"></div>
+
+        <div class="form-row form-row--flex form-row--flex-start">
+          <%= link_to 'Cancel', { action: 'index' }, class: 'button button--secondary button--inline' %>
+          <%= f.submit @submit_text, class: 'button button--primary button--large button--inline' %>
+        </div>
+    <% end %>
+  </div>
+
+  <div class="geofences-form-map">
+    <div class="geofences-form-map__wrapper">
+      <div
+        id="map"
+        class="map-wrapper googlemap"
+        data-default-map-center="<%= default_map_center_json %>"
+      >
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  if ($('#geofence_shape_type_1').is(':checked')) {
+    polypoints_array = <%= @geofence.polypoints.collect{|x| [x.latitude, x.longitude]}.to_json.html_safe %>;
+  }
+  window.geocode_button_needs_clicking = false;
+  $('#zoom_to').val($('#geofence_address').val());
+</script>

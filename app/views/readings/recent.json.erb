@@ -1,0 +1,1 @@
+<%= @devices.map { |device| hash_from_device(device, current_user) }.to_json.html_safe %>

@@ -1,0 +1,62 @@
+dennis:
+ id: 1
+ company: Dennis Co
+ address: 1234 Foo Bar St.
+ zip: 12345
+ subdomain: dennis
+ created_at: <%= 1.day.ago.to_s :db %>
+ is_verified: true
+ max_speed: 30
+ time_zone: Central Time (US & Canada)
+ collection_token: dennis
+
+nick:
+ id: 2
+ company: Nick Co
+ address: 1234 Foo Bar St.
+ zip: 12345
+ subdomain: nick
+ created_at: <%= 2.day.ago.to_s :db %>
+ is_verified: true
+ time_zone: Pacific Time (US & Canada)
+ collection_token: nick
+
+ken:
+ id: 3
+ company: Ken Co
+ address: 1234 Foo Bar St.
+ zip: 12345
+ subdomain: ken
+ created_at: <%= 3.day.ago.to_s :db %>
+ is_verified: true
+ time_zone: Eastern Time (US & Canada)
+ collection_token: ken
+
+byron:
+ id: 4
+ company: Byron Co
+ address: 1234 Foo Bar St.
+ subdomain: byron
+ created_at: <%= 4.day.ago.to_s :db %>
+ is_verified: true
+ collection_token: byron
+
+newcustomer:
+ id: 5
+ company: New Co
+ address: 1234 Foo Bar St.
+ zip: 12345
+ subdomain: newcustomer
+ created_at: <%= 5.day.ago.to_s :db %>
+ is_verified: true
+ collection_token: newco
+
+staging:
+ id: 6
+ company: GoTrack Staging
+ address: 1234 Foo Bar St.
+ zip: 12345
+ subdomain: staging
+ created_at: <%= Time.now.to_s :db %>
+ is_verified: true
+ collection_token: gotrackstg

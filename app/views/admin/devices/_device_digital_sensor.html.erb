@@ -1,0 +1,62 @@
+<% if device.max_digital_sensors > 0 %>
+  <% sensors.each do |sensor| %>
+      <%= hidden_field_tag "device[digital_sensors_attributes][#{sensor.address}][address]", sensor.address%>
+      <%= hidden_field_tag "device[digital_sensors_attributes][#{sensor.address}][id]", sensor.id%>
+  <%end%>
+
+  <div class="digital-sensors-data">
+    <div class="form-row form-row--flex">
+      <% sensors.each do |sensor, index| %>
+        <div class="form-row form-row--inline">
+          <span class="digital-sensors-data__title">Digital Sensor <%=sensor.address%></span>
+        </div>
+      <%end%>
+    </div>
+
+    <div class="form-row form-row--flex">
+      <% sensors.each do |sensor| %>
+        <div class="form-row form-row--inline">
+          <div class="form-label form-label--title">Label</div>
+          <%= text_field "device[digital_sensors_attributes][#{sensor.address}]", :name, class: "form-input form-input--full-width" ,value: sensor.name %>
+        </div>
+      <%end%>
+    </div>
+
+    <div class="form-row form-row--flex">
+      <% sensors.each do |sensor| %>
+        <div class="form-row form-row--inline">
+          <div class="form-label form-label--title">High Label</div>
+          <%= text_field "device[digital_sensors_attributes][#{sensor.address}]", :high_label, class: "form-input form-input--full-width", value: sensor.high_label %>
+        </div>
+      <%end%>
+    </div>
+
+    <div class="form-row form-row--flex">
+      <% sensors.each do |sensor| %>
+        <div class="form-row form-row--inline">
+          <div class="form-label form-label--title">Low Label</div>
+          <%= text_field "device[digital_sensors_attributes][#{sensor.address}]", :low_label, class: "form-input form-input--full-width", value: sensor.low_label %>
+        </div>
+      <%end%>
+    </div>
+
+    <div class="form-row form-row--flex">
+      <% sensors.each do |sensor| %>
+        <div class="form-row form-row--inline">
+          <div class="form-label form-label--title">Notifications</div>
+          <div class="form-select-wrapper form__input">
+            <%= select(
+                  "device[digital_sensors_attributes][#{sensor.address}]",
+                  :notification_type,
+                  digital_sensor_notification_type_options(sensor),
+                  {},
+                  { class: 'form-input form-input--full-width form-select' }
+                )
+            %>
+            <i class="fa fa-caret-down form-select__arrow " aria-hidden="true"></i>
+          </div>
+        </div>
+      <%end%>
+    </div>
+  </div>
+<% end %>

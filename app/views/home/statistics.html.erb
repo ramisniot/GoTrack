@@ -1,0 +1,20 @@
+<script>
+  var frm_index = false;
+</script>
+<div class="overview-devices">
+  <%= render partial: 'device_summary_header', locals: { sub_heading: "(Last 7 days)" } %>
+  <div class="overview-devices__table">
+    <table class="panel_table" >
+      <tr>
+        <th>Name</th>
+        <th>&nbsp;</th>
+        <th>Stops</th>
+        <th>Idle (hours)</th>
+        <th>%</th>
+        <th>Runtime (hours)</th>
+        <th>%</th>
+      </tr>
+      <%= render partial: "group_rows", locals: { column_span: 7, callback: "show_statistics" } %>
+    </table>
+  </div>
+</div>

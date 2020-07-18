@@ -1,0 +1,36 @@
+<div class="reports-show">
+  <div class="page-title devices__title"><%= @scheduled_report.report_name %> report</div>
+
+  <% if @report_data.count > 1 %>
+    <table class="panel_table">
+      <% @report_data.each_with_index do |row, i| %>
+        <% if i.zero? %>
+          <thead>
+            <% row.each do |title| %>
+              <th>
+                <%= title %>
+              </th>
+            <% end %>
+          </thead>
+        <% else %>
+          <tr>
+            <% row.each do |data| %>
+              <td class="reports-show__value">
+                <%= data %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      <% end %>
+    </table>
+  <% else %>
+    <div class="scheduled_report__empty-state empty-state">
+      <div class="empty-state__logo">
+        <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+      </div>
+      <div class="empty-state__text-container scheduled_report__empty-state__text-container">
+        <span class="empty-state__text-container__title">There were no results for this report.</span>
+      </div>
+    </div>
+  <% end %>
+</div>

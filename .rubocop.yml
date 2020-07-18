@@ -1,0 +1,14 @@
+inherit_from: .rubocop_todo.yml
+
+Documentation:
+  Enabled: false
+StringLiterals:
+  Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
+Style/BracesAroundHashParameters:
+  Enabled: false
+AllCops:
+  Exclude:
+    - 'db/schema.rb'
+    - 'vendor/**/*'

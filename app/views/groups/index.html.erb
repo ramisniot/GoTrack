@@ -1,0 +1,59 @@
+<%= render partial: '/layouts/flash_message' %>
+<div class="fleets__content">
+
+  <div class="page-header">
+    <div class="page-header__title-container">
+      <span class="page-title">Your Fleets (<%= @groups.size%> total)</span>
+    </div>
+    <% if controller.action_name == 'index' && !current_user.is_read_only? && !@groups.empty? %>
+      <div class="page-header__action">
+          <%= link_to('Add New Fleet', new_group_path, title: 'Create new fleet', class: "button button--primary button--large" )%>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="fleets__description">
+    Fleets are a great way to keep your devices organized.
+    Creating a fleet is easy and allows you to quickly see which devices are associated with your fleet on the <a href="/home">overview screen</a>.
+  </div>
+
+  <table class='panel_table'>
+    <tbody>
+      <% if @groups.empty? && !current_user.is_read_only? %>
+      <div class="fleets__empty-state empty-state">
+        <div class="empty-state__logo">
+          <i class="fa fa-truck" aria-hidden="true"></i>
+        </div>
+        <div class="empty-state__button-container">
+          <%= link_to('Add New Fleet', new_group_path, title: 'Create new fleet', class: "button button--primary button--large" )%>
+        </div>
+        <div class="empty-state__text-container">
+          <span class="empty-state__text-container__title">No fleets found. You can click the button above to create a new one.</span>
+        </div>
+      </div>
+      <% else %>
+        <% @groups.each do |group| %>
+          <tr>
+            <% if current_user.is_read_only? %>
+              <td><%= group.name %></td>
+            <% else %>
+              <td class="fleets__name-cell">
+                <%= group.name %>
+              </td>
+              <td class="fleets__edit-cell">
+                <div class="table-actions">
+                  <%= link_to edit_group_path(group), title: 'Edit this fleet' do %>
+                    <i class="fa fa-pencil link-icon" aria-hidden="true"></i>
+                  <% end %>
+                  <%= link_to group_path(group.id), method: :delete, title: 'Delete this fleet', data: { confirm: 'Are you sure you want to delete this fleet?' } do %>
+                    <i class="fa fa-trash link-icon"></i>
+                  <% end %>
+                </div>
+              </td>
+            <% end %>
+          </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<% end %>

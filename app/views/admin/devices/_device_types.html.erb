@@ -1,0 +1,6 @@
+<select name="device[device_type]" id="device_device_type" class="form-input form-input--full-width form-select">
+  <option value="">Unspecified</option>
+  <% for device_type in device_types %>
+      <option value="<%= device_type.name %>" <% if selected_device_type == device_type.name %>selected="selected"<% end %>><%= device_type.label %></option>
+  <% end %>
+</select>

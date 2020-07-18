@@ -1,0 +1,54 @@
+@import "constants.scss";
+@import "colors.scss";
+
+.admin-title {
+  margin-bottom: $base-spacing-unit;
+}
+
+.admin-search-bar {
+  margin-bottom: $base-spacing-unit;
+
+  &__container {
+    flex: 3;
+    margin-left: $base-spacing-unit;
+    margin-top: $base-spacing-unit / 2;
+
+    &--no-label {
+      margin-top: 18px;
+    }
+  }
+
+  &__button {
+    margin-right: $base-spacing-unit;
+    display: inline-block;
+    float: right;
+  }
+
+  &__filter {
+    margin: 10px 10px 0px $base-spacing-unit;
+    flex: 1;
+  }
+
+  &__subdomain {
+    margin: 10px 0px 0px $base-spacing-unit;
+    flex: 1;
+  }
+
+  &__select {
+    display: flex;
+  }
+
+  &__search-box-container {
+    flex: 3;
+    margin: 10px -10px 0px $base-spacing-unit;
+   }
+}
+
+
+.digital-sensors-data {
+  margin-top: 40px;
+
+  &__title {
+    font-size: 17px;
+  }
+}

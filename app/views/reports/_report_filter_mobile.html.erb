@@ -1,0 +1,30 @@
+<div class="header-mobile reports-mobile-subnav">
+  <ul>
+    <li class='reports-mobile-subnav--selected' id="subnav_map"><a><span>Map</span></a></li>
+    <li id="subnav_reports"><a><span >Reports</span></a></li>
+  </ul>
+</div>
+
+<div class="search-bar search-bar--mobile search-bar--flexible reports-header reports-header--mobile">
+  <%= form_for(action_reports_path(action: params[:action], id: params[:id]), method: :get, html: { class: "search-bar__form reports-outer-form" }) do %>
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+    <div class="search-bar__form__fields">
+      <div class="search-bar__form__field search-bar__form__field--mobile">
+        <select class="form-select form-select__mobile" onchange="changeDevice(this.options[this.selectedIndex].value, '<%= params[:action] %>', '<%= @start_date %>', '<%= @end_date%>', this.form);">
+          <% for device in @device_names %>
+            <option value="<%= device.id %>" <% if params[:id].to_i == device.id %>selected="selected"<% end %>><%= device_short_name(device) %></option>
+          <% end %>
+        </select>
+        <i class="fa fa-caret-down form-select__arrow"></i>
+      </div>
+    </div>
+    <div class="search-bar__form__fields search-bar__form__action-date-mobile">
+      <div class="search-bar__form__field search-bar__form__field--margin-small">
+        <%= select_date_with_arrow(@start_date, { order: [:month, :day, :year], use_short_month: true, prefix: 'start_date' }, { class: 'form-select' }) %>
+      </div>
+      <div class="search-bar__form__action">
+        <input class="button button--primary" name="commit" type="submit" value="Go" />
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,36 @@
+//Override the default confirm dialog by rails
+$.rails.allowAction = function(link) {
+  if (link.data("confirm") == undefined) {
+    return true;
+  }
+  $.rails.showConfirmationDialog(link);
+  return false;
+}
+
+$.rails.confirmed = function(link) {
+  link.data("confirm", null);
+  link.trigger("click.rails");
+}
+
+$.rails.showConfirmationDialog = function(link) {
+  var message = link.data("confirm");
+  $.ajax({
+    url: "/render_confirmation_modal",
+    success: function(data) {
+      var html = data['html'];
+      $(html).dialog({
+        resizable: false,
+        dialogClass: 'jquery-modal',
+        modal: true,
+      });
+      $('#confirmation-text').text(message);
+      $('#modal-confirm').click(function() {
+        $.rails.confirmed(link);
+      });
+      $('#modal-cancel').click(function() {
+        $('.ui-dialog').remove();
+        $('.ui-widget-overlay').remove();
+      });
+    }
+  });
+}

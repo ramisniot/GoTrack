@@ -1,0 +1,2 @@
+Dear John Smith,
+Idling Alert for device `EJR-9127` exceeding 5 min on 2015-04-04 14:00:00 +0200 at Full Address

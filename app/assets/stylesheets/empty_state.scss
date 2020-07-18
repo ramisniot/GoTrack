@@ -1,0 +1,39 @@
+@import "colors";
+
+.empty-state {
+  display: block;
+  text-align: center;
+  background-color: $color-pearl;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  color: $color-dust-gray;
+
+  &__logo {
+    font-size: 120px;
+    position: relative;
+    padding-top: 40px;
+    color: $color-dust-gray;
+  }
+
+  &__button-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__text-container {
+    position: relative;
+    width: 260px;
+    padding-top: 20px;
+
+    &__title {
+      font-size: 13px;
+      display: inline-block;
+    }
+  }
+
+  &--small {
+    height: 280px;
+    width: 280px;
+  }
+}

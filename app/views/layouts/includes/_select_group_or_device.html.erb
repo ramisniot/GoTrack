@@ -1,0 +1,16 @@
+<% select_onchange ||= nil %>
+<% select_class ||= nil %>
+	<select id="group_type"<% if select_class %> class="<%= select_class %>"<% end %> name="<%= select_name %>"<% if select_onchange %> onchange="<%= select_onchange %>;"<% end %>>
+		<option value="all" <%if current_group_value == 'all' and not current_home_device %> selected class="default-row"<%end%>>All Fleets</span>
+		<% for group in all_groups %>
+			<option <%if current_group_value.to_i == group.id and not current_home_device %> selected class="default-row"<%end%> value='<%= group.id%>'><%= group.name %></option>
+		<% end %>
+		<%if default_devices.any? %>
+			<option <%if current_group_value == 'default' %> selected class="default-row" <%end%> value='default'>Default</option>
+		<%end%>
+		<option id="" disabled="disabled"> - - - - - - - - - - - - - - -  </option>
+		<% for device in all_devices %>
+			<option <%if current_home_device.to_i == device.id %> selected class="default-row"<%end%> value='<%= -device.id %>'><%= device.name %></option>
+		<% end %>
+	</select>
+	<i class="fa fa-caret-down form-select__arrow search-bar__arrow" aria-hidden="true"></i>

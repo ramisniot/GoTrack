@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <%= csrf_meta_tag %>
+  <title><%= @page_title %></title>
+
+  <%= render partial: 'layouts/includes/map_key' %>
+
+  <%= stylesheet_link_tag 'application' %>
+  <%= javascript_include_tag 'application' %>
+</head>
+
+<body>
+
+<% if current_user.nil? %>
+    <div id="header">
+      <div id="c-logged-user" style="margin-right: 4px;">
+        <img src="/images/gotrack_logo_small.png" alt="GoTrack logo" border ="0" style="vertical-align: middle;" />
+      </div>
+      <div style="clear:both;"></div>
+    </div>
+<% else %>
+    <%= render partial: 'layouts/includes/header' %>
+<% end %>
+
+<div id="content" class="content">
+  <%= yield %>
+</div>
+
+<%= render partial: 'layouts/includes/footer' %>
+</body>
+</html>

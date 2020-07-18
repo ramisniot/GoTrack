@@ -1,0 +1,116 @@
+reading1:
+  id: 1
+  data: { "gps": { "head": 160, "alt": 5000 }, "street": "Big Springs Dr", "street_number": 6762, "place_name": "Arlington", "admin_name1": "TX" }
+  latitude: 32.63585
+  longitude: -97.17569
+  speed: 18,
+  device_id: 1
+  recorded_at: <%= Time.zone.parse('15:34:23').to_s(:db) %>
+  gateway_event_type: normal_et2
+  location_id: 1
+
+reading2:
+  id: 2
+  data: { "gps": { "head": 130, "alt": 5000 }, "street": "Inwood Rd", "place_name": "Farmers Branch", "admin_name1": "TX" }
+  latitude: 32.934
+  longitude: -96.8231
+  speed: 24
+  device_id: 2
+  recorded_at: <%= Time.zone.parse('15:34:23').to_s(:db) %>
+  gateway_event_type: normal_et2
+  location_id: 1
+
+reading3:
+  id: 3
+  data: { "gps": { "head": 130, "alt": 5000 } }
+  latitude: 32.9395
+  longitude: -96.8244
+  device_id: 1
+  recorded_at: <%= Time.zone.parse('15:34:23').to_s(:db) %>
+  gateway_event_type: normal_et2
+
+reading4:
+  id: 4
+  data: { "gps": { "head": 110, "alt": 5000 } }
+  latitude: 32.94
+  longitude: -96.8217
+  speed: 45
+  device_id: 5
+  recorded_at: <%= Time.zone.parse('15:34:23').to_s(:db) %>
+  gateway_event_type: normal_et2
+
+reading5:
+  id: 5
+  data: { gps: { "head": 170, "alt": 5000 }, "place_name": "Bigfork", "admin_name1": "MT" }
+  latitude: 48.049269
+  longitude: -114.078745
+  speed: 65
+  device_id: 2
+  recorded_at: <%= (Time.zone.parse('15:34:23')-2).to_s(:db) %>
+  gateway_event_type: normal_et2
+  location_id: 1
+
+reading6:
+  id: 6
+  data: { "gps": { "head": 190, "alt": 5000 } }
+  latitude: 32.9514
+  longitude: -96.8228
+  speed: 90
+  device_id: 1
+  recorded_at: <%= (Time.zone.parse('15:34:23')-3).to_s(:db) %>
+  gateway_event_type: exitgeofen_et51
+
+reading13:
+  id: 13
+  data: { "gps": { "head": 190, "alt": 5000 } }
+  latitude: 32.9575
+  longitude: -96.8217
+  speed: 40
+  device_id: 1
+  recorded_at: <%= (Time.zone.parse('15:34:23')-10).to_s(:db) %>
+  gateway_event_type: normal_et2
+
+readings_224:
+  data: { "gps": { "head": 0, "alt": 181 }, "address": "<?xml version='1.0' encoding='UTF-8' standalone='no'?><geonames><address><street>Spring Valley Rd</street><streetNumber>5166</streetNumber><lat>32.939500194936585</lat><lng>-96.8234523712894</lng><distance>0.06</distance><postalcode>75254</postalcode><placename>Farmers Branch</placename><adminName2>Dallas</adminName2><adminCode1>TX</adminCode1><adminName1>Texas</adminName1><countryCode>US</countryCode></address></geonames>" }
+  latitude: "32.939"
+  longitude: "-96.8235"
+  speed: 0
+  updated_at:
+  device_id: "1"
+  id: "272312"
+  gateway_event_type: exitgeofen_20
+  geofence_event_type: exit
+  geofence_id: 2
+  recorded_at: 2007-07-24 15:39:58
+
+9922:
+  id: 9922
+  data: { "gps": { "head": 240, "alt": 5000 } }
+  latitude: 32.9545
+  longitude: -96.8283
+  speed: 60
+  device_id: 1
+  recorded_at: <%= (Time.zone.parse('15:34:23')-11).to_s(:db) %>
+  gateway_event_type: startstop_et41
+
+readings_9926:
+  updated_at:
+  data: { "gps": { "alt": 182, "head": 0}, "eng": { "ign": 1 }, "street": "Yates Dr", "place_name": "Hurst", "admin_name1": "TX", "gpio1": true, "gpio2": true }
+  latitude: "32.8491"
+  longitude: "-97.1706"
+  speed: 0
+  device_id: "8"
+  id: "9926"
+  gateway_event_type: exitgeofen_et51
+  recorded_at: <%= Time.zone.parse('15:34:23').to_s(:db) %>
+
+reading_with_location:
+  data: { "gps": { "head": "0", "alt": 182}, "eng": { "ign": 1 }, "street": "Yates Dr", "place_name": "Hurst", "admin_name1": "TX", "gpio1": true, "gpio2": true }
+  latitude: "32.8491"
+  longitude: "-97.1706"
+  speed: 0
+  device_id: "8"
+  id: "2330"
+  gateway_event_type: exitgeofen_et51
+  recorded_at: <%= Time.zone.parse('15:34:23').to_s(:db) %>
+  location_id: 1

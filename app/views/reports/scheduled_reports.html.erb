@@ -1,0 +1,45 @@
+<% if @scheduled_reports.blank? %>
+
+  <div class="scheduled_report__empty-state empty-state">
+    <div class="empty-state__logo">
+      <i class="fa fa-calendar" aria-hidden="true"></i>
+    </div>
+    <div class="empty-state__button-container">
+      <a href="/scheduled_reports/new" title="Create new scheduled report" class="button button--primary button--large">Add Scheduled Report</a>
+    </div>
+    <div class="empty-state__text-container scheduled_report__empty-state__text-container">
+      <span class="empty-state__text-container__title">You have no Scheduled Reports. You can click the button above to create a new one.</span>
+    </div>
+  </div>
+
+<% else %>
+  <div class="page-header scheduled_report__header">
+    <div class="page-header__actions scheduled_report__action-button">
+      <a href="/scheduled_reports/new" title="Create new scheduled report" class="button button--primary button--large">Add Scheduled Report</a>
+    </div>
+  </div>
+	<table class="panel_table">
+    <thead>
+      <tr>
+        <th colspan="2">Report</th>
+        <th colspan="2">Scheduled For</th>
+        <th colspan="2">Kind</th>
+        <th colspan="1">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for scheduled_report in @scheduled_reports %>
+      <tr>
+        <td colspan="2"><%= report_name(scheduled_report) %></td>
+        <td colspan="2"><%= scheduled_report.scheduled_for.in_time_zone.strftime(STANDARD_DATE_FORMAT+", %l %p") %></td>
+        <td colspan="2"><%= scheduled_report.report_type.gsub('group','fleet').gsub('trip','Start/Stop').titleize %></td>
+        <td colspan="1">
+          <div class="table-actions">
+            <%= report_actions(scheduled_report) %>
+          </div>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+	</table>
+<% end %>

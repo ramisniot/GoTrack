@@ -1,0 +1,7 @@
+<% initial_message = InitialMessage.get_text_as_html(current_locale) %>
+
+<% if !initial_message.blank? %>
+    <div class="initial_message">
+      <%= initial_message %>
+    </div>
+<% end %>

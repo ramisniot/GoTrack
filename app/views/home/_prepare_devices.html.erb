@@ -1,0 +1,25 @@
+<% @groups.each do |group| %>
+  <% unless group.devices.empty? %>
+    <% devices_in_group_and_dispatchable(group, @dispatchable_devices).each do |device|%>
+      <% if device.last_gps_reading %>
+        <%= add_device_js(device) %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if default_devices.any? && @show_default_devices %>
+  <% default_devices.select{|d| @dispatchable_devices.blank? || @dispatchable_devices.map(&:id).include?(d.id)}.each do |device| %>
+    <% if device.last_gps_reading %>
+      <%= add_device_js(device) %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% if current_home_device and (device = Device.find(current_home_device)) %>
+  <% if device.last_gps_reading %>
+    <%= add_device_js(device) %>
+  <% end %>
+<% end %>
+
+<%= render partial: '/shared/load_rgeo', locals: { frm_index: true, show_direction: false, show_phone_number: false }  %>

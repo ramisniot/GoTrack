@@ -1,0 +1,52 @@
+@import "colors";
+@import "media_queries_breakpoints";
+
+.pagination-default {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+
+  @media #{$smartphones} {
+    display: none;
+  }
+  .pagination {
+    display: flex;
+    margin: 0px;
+
+    & * {
+      font-size: 14px;
+      color: $color-tundora-gray;
+      font-style: normal;
+      font-weight: bold;
+    }
+
+    & > .current {
+      background-color: $color-silver-chalice;
+      padding: 10px 20px;
+      cursor: not-allowed;
+      display: table;
+    }
+
+    & > a {
+      background-color: $color-pearl;
+      text-decoration: none;
+      padding: 10px 20px;
+      font-family: Roboto, Arial, Helvetica, sans-serif !important;
+
+      &:hover {
+        background-color: $color-silver-chalice;
+      }
+    }
+
+    & > .previous_page, .next_page {
+      background-color: $color-silver !important;
+      padding: 10px 20px;
+    }
+
+    & > .previous_page.disabled, .next_page.disabled {
+      cursor: not-allowed;
+      display: table;
+    }
+  }
+}

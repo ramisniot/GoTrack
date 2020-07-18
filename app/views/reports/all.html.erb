@@ -1,0 +1,10 @@
+<% if browser.device.mobile? %>
+  <%= render partial: 'report_filter_mobile' %>
+<% else %>
+  <%= render partial: 'report_header' %>
+<% end %>
+
+<%= render partial: 'table_report', locals: { with_map: true, all: true } %>
+<%= render partial: 'map_and_toggler', locals: { with_toggler: false } if browser.device.mobile? %>
+
+<%= render partial: 'report_footer', locals: { entities: @readings } %>

@@ -1,0 +1,7 @@
+<% active = LoginMessage.instance.is_active? %>
+<% text_class = active ? 'login-message__status-active' : 'login-message__status-inactive' %>
+<% message = active ? 'Active' : 'Inactive' %>
+<% text = active ? 'Deactivate' : 'Activate'  %>
+
+<input type="button" class="button button--primary button--inline" value="<%= text %>" onclick="$.ajax({ url: '/admin/toggle_login_message', dataType: 'script' })" />
+<span class="login-message <%= text_class %>">Currently <b><%= message %></b></span>

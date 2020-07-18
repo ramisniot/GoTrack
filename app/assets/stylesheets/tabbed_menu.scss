@@ -1,0 +1,80 @@
+@import "colors";
+@import "constants";
+@import "media_queries_breakpoints";
+
+.tabbed-menu {
+  width: 100%;
+  padding-top: 10px;
+  margin-bottom: ($base-spacing-unit * 3) / 4;
+  background-color: $color-tundora-gray;
+
+  &__bar {
+    display: flex;
+    height: 30px;
+    padding-left: 30px;
+    line-height: 18px;
+
+    & > a {
+      color: $color-silver-chalice;
+      text-decoration: none;
+      font-size: 12px;
+      min-width: 80px;
+      text-align: center;
+      padding: 5px 10px 0px;
+
+      &:hover {
+        color: $color-white;
+        font-weight: bold;
+      }
+
+      &.current-tab {
+        color: $color-black;
+        background-color: $color-white;
+        font-weight: bold;
+      }
+
+      &.wider-tab {
+        min-width: 120px;
+      }
+    }
+
+    &--crowded {
+      @media #{$tablets-and-smartphones} {
+        a {
+          min-width: 55px;
+
+          &.wider-tab {
+            min-width: 70px;
+          }
+        }
+      }
+
+      @media #{$tablets-portrait} {
+        padding-left: 0;
+        height: 45px;
+        line-height: normal;
+
+        a {
+          span {
+            line-height: 30px;
+            vertical-align: middle;
+          }
+
+          &.wider-tab {
+            max-width: 85px;
+
+            span {
+              vertical-align: inherit;
+              line-height: normal;
+            }
+
+            &--one-line span {
+              line-height: 30px;
+              vertical-align: middle;
+            }
+          }
+        }
+      }
+    }
+  }
+}

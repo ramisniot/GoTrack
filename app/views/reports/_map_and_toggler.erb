@@ -1,0 +1,16 @@
+<% if with_toggler %>
+  <div class="reports-content__toggler">
+    <a href="javascript:toggleMap();" title="Expand map view" class="toggler_link">
+      <%= image_tag 'collapse.png', border: 0, id: 'toggler' %>
+    </a>
+  </div>
+
+  <div id="right_panel" class="reports-content__right">
+    <div id="map" class="reports-map" data-default-map-center="<%= default_map_center_json %>"></div>
+  </div>
+
+<% else %>
+  <div id="map-wrapper" class="reports-map__mobile-wrapper">
+    <div id="map" class="reports-map" data-default-map-center="<%= default_map_center_json %>"></div>
+  </div>
+<% end %>

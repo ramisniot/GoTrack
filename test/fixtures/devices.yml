@@ -1,0 +1,109 @@
+device1:
+  id: 1
+  name: device 1
+  imei: 1234
+  created_at: <%= Time.now.utc.to_s(:db) %>
+  last_reading_id: 1
+  last_gps_reading_id: 1
+  provision_status_id: 1
+  account_id: 1 # Dennis Co
+  group_id: 1
+  last_online_time: <%= Time.now.utc.to_s(:db) %>
+  offline_threshold: NULL
+  is_public: true
+  icon_id: 4
+  profile_id: 1
+  thing_token: 'device1_token'
+
+device2:
+  id: 2
+  name: device 2
+  imei: 5678
+  created_at: <%= Time.now.utc.to_s(:db) %>
+  last_reading_id: 2
+  last_gps_reading_id: 2
+  provision_status_id: 1
+  account_id: 1 # Dennis Co
+  profile_id: 1
+  thing_token: 'device2_token'
+
+device3:
+  id: 3
+  name: device 3
+  imei: 54321
+  created_at: <%= Time.now.utc.to_s(:db) %>
+  last_reading_id: 3
+  last_gps_reading_id: 3
+  provision_status_id: 1
+  account_id: 1 # Nick Co
+  group_id: 2
+  last_online_time: <%= (Time.now.utc-6481*60).to_s(:db) %>
+  icon_id: 3
+  profile_id: 1
+  thing_token: 'device3_token'
+
+device4:
+  id: 4
+  name: device 4 [no data]
+  imei: 9999
+  created_at: <%= Time.now.utc.to_s(:db) %>
+  provision_status_id: 1
+  account_id: 1 # Dennis Co
+  group_id: 5
+  last_online_time: <%= Time.now.utc.to_s(:db) %>
+  icon_id: 8
+  profile_id: 1
+  thing_token: 'device4_token'
+
+device5:
+  id: 5
+  name: unprovisioned
+  imei: 33333
+  created_at: <%= Time.now.utc.to_s(:db) %>
+  last_reading_id: 5
+  last_gps_reading_id: 5
+  provision_status_id: 0
+  last_online_time: <%= Time.now.utc.to_s(:db) %>
+  profile_id: 1
+  thing_token: 'device5_token'
+
+device6:
+  id: 6
+  name: BlackBerry 8800
+  imei: 55124
+  created_at: <%= Time.now.utc.to_s(:db) %>
+  last_reading_id: 6
+  last_gps_reading_id: 6
+  provision_status_id: 1
+  account_id: 1 # Dennis Co
+  group_id: 1
+  last_online_time: <%= Time.now.utc.to_s(:db) %>
+  icon_id: 4
+  profile_id: 1
+  thing_token: 'device6_token'
+
+device7:
+  id: 7
+  name: BlackBerry 8800
+  imei: 551211
+  created_at: <%= Time.now.utc.to_s(:db) %>
+  last_reading_id: 9925
+  last_gps_reading_id: 9925
+  provision_status_id: 1
+  account_id: 2
+  last_online_time: <%= Time.now.utc.to_s(:db) %>
+  profile_id: 2
+  thing_token: 'device7_token'
+
+device8:
+  id: 8
+  name: Fixture Device
+  imei: 357820023891971
+  created_at: <%= Time.now.utc.to_s(:db) %>
+  last_reading_id: 9926
+  last_gps_reading_id: 9926
+  provision_status_id: 1
+  account_id: 6
+  last_online_time: <%= Time.now.utc.to_s(:db) %>
+  profile_id: 3
+  thing_token: 'device8_token'

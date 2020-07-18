@@ -1,0 +1,53 @@
+<div class="admin-overview">
+
+  <div class="page-title admin-overview__title">Admin Overview</div>
+
+  <div class="admin-overview__summary">
+    <div class="admin-overview-box">
+      <div class="admin-overview-box__content">
+        <a href="/admin/accounts">
+          <div class="admin-overview-box__title">Accounts</div>
+          <div class="admin-overview-box__value"><%= @total_accounts %></div>
+        </a>
+        <div class="admin-overview-box__action">
+          <a href="/admin/accounts/new" class="button button--primary">Create</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-overview-box">
+      <div class="admin-overview-box__content">
+        <a href="/admin/users">
+          <div class="admin-overview-box__title">Users</div>
+          <div class="admin-overview-box__value"><%= @total_users %></div>
+        </a>
+        <div class="admin-overview-box__action">
+          <a href="/admin/users/new" class="button button--primary">Create</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-overview-box">
+      <div class="admin-overview-box__content">
+        <a href="/admin/devices">
+          <div class="admin-overview-box__title">Devices</div>
+          <div class="admin-overview-box__value"><%= @total_devices %></div>
+        </a>
+        <div class="admin-overview-box__action">
+          <a href="/admin/devices/new" class="button button--primary">Create</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if !current_user.nil? && current_user.is_super_admin? %>
+    <div class="admin-overview__login-message">
+      <div class="page-title admin-overview__title">Login Message</div>
+      <div id="login_message_active" class="admin-overview__login-message-header">
+        <%= render partial: 'login_message_active' %>
+      </div>
+
+      <%= render partial: 'login_message_preview' %>
+    </div>
+  <% end %>
+</div>

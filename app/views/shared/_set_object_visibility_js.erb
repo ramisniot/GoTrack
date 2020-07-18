@@ -1,0 +1,9 @@
+<script type="text/javascript">
+	window.frameSpecificOverlayVisibilities = [];
+<% if current_user.view_overlays? :placemarks %>
+	window.frameSpecificOverlayVisibilities.push('placemarks');
+<% end %>
+<% if current_user.view_overlays? :geofences %>
+	window.frameSpecificOverlayVisibilities.push('geofences');
+<% end %>
+</script>

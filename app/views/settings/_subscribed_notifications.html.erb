@@ -1,0 +1,21 @@
+<div id="user-subscribed-notifications-js">
+  <div class="settings-box__instruction">
+    Please select one or more notifications from the list below
+  </div>
+
+  <% User.available_subscriptions.each do |notification_type| %>
+    <div>
+      <input
+        name="subscribed_notifications[]"
+        type="checkbox"
+        value="<%= notification_type %>"
+        <% if @user.subscribed_notifications?(notification_type) %>checked="checked"<% end %>
+      />
+      <%= notification_type_description(notification_type) %>
+    </div>
+  <% end %>
+
+  <input type="hidden" name="subscribed_notifications[]" value="none"/>
+</div>
+
+<div id="user-subscribed-notifications-disabled-js"></div>

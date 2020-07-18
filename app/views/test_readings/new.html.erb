@@ -1,0 +1,47 @@
+<% content_for :page_title, 'Test Readings' %>
+<% content_for :title, 'Test Readings' %>
+
+<h3><%= "Device: #{@device.name}" %></h3>
+
+<%= form_tag device_test_readings_path, method: 'POST' do %>
+  <%= text_field_tag :latitude, nil, placeholder: 'latitude' %>
+  <%= text_field_tag :longitude, nil, placeholder: 'longitude' %>
+  Event type: <%= select_tag(:event_type, event_type_options) %>
+  <%= text_field_tag :speed, nil, placeholder: 'speed' %>
+  Ignition? <%= check_box_tag :ignition %>
+  Sensor address: <%= select_tag(:address, options_for_select([1, 2, 3])) %>
+  <%= submit_tag %>
+<% end %>
+
+<div id="test_map" style="height: 500px;" ></div>
+
+<%= javascript_tag do %>
+  var Map = function(mapId) {
+    var ZOOM = 15,
+    CENTER_LAT_LNG = new google.maps.LatLng(<%= @lat %>, <%= @lng %>),
+
+    options = {
+      zoom: ZOOM,
+      center: CENTER_LAT_LNG,
+      scrollwheel: true,
+      streetViewControl: false,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      mapTypeControl: true,
+      mapTypeControlOptions: {
+        mapTypeIds: [google.maps.MapTypeId.HYBRID, google.maps.MapTypeId.ROADMAP]
+      },
+      scaleControl: true,
+      scaleControlOptions: {
+        position: google.maps.ScaleControlStyle.RIGHT
+      }
+    },
+
+    test_map = new google.maps.Map(document.getElementById(mapId), options);
+
+    google.maps.event.addListener(test_map, 'click', function( event ) {
+      $('#latitude').val(event.latLng.lat());
+      $('#longitude').val(event.latLng.lng());
+    });
+  };
+  var test_map = Map('test_map')
+<% end %>

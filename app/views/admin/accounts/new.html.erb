@@ -1,0 +1,19 @@
+<div class="page-header">
+  <div class="page-header__title-container">
+    <div class="page-title">
+      Create New Account
+    </div>
+  </div>
+</div>
+
+<%= render partial: '/layouts/flash_message' %>
+
+<%= form_for(@account, url: admin_accounts_path) do %>
+  <%= render partial: 'account_form' %>
+<% end %>
+
+<script language="javascript" type="text/javascript">
+  window.onload = function() {
+    document.getElementById("subdomain").focus();
+  }
+</script>

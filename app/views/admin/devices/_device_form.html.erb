@@ -1,0 +1,85 @@
+<div class="form-row form-row--flex form__row">
+  <div class="form-row form-row--inline">
+    <label class="form-label form-label--title">Name *</label>
+    <input type="text" class="form-input form-input--full-width form__input" name="device[name]" id="name" value="<%= @device.name %>" />
+  </div>
+
+  <div class="form-row form-row--inline">
+    <label class="form-label form-label--title">IMEI *</label>
+    <% unless current_user.is_super_admin? %>
+      <input type="text" class="form-input form-input--full-width form__input" disabled="disabled" name="device[imei]" value="<%= @device.imei %>" />
+    <% else %>
+      <input type="text" class="form-input form-input--full-width form__input" name="device[imei]" value="<%= @device.imei %>" />
+    <% end %>
+  </div>
+</div>
+
+<div class="form-row form-row--flex form__row">
+  <div class="form-row form-row--inline">
+    <label class="form-label form-label--title">Account</label>
+    <div class="form-select-wrapper form__input">
+      <select class="form-input form-input--full-width form-select" name="device[account_id]" id="js-device-account">
+        <option value="0">None</option>
+        <% @accounts.each do |account| %>
+          <option value="<%= account.id %>" <% if @device.account_id.to_s == account.id.to_s %>selected="selected"<% end %>><%= account.company %></option>
+        <% end %>
+      </select>
+      <i class="fa fa-caret-down form-select__arrow " aria-hidden="true"></i>
+    </div>
+  </div>
+
+  <div class="form-row form-row--inline">
+    <label class="form-label form-label--title">Status</label>
+    <div class="form-select-wrapper form__input">
+      <select name="device[provision_status_id]" class="form-input form-input--full-width form-select">
+        <option value="1" <% if @device.provision_status_id == 1 %>selected="selected"<% end %>>ACTIVE</option>
+        <option value="0" <% if @device.provision_status_id == 0 %>selected="selected"<% end %>>INACTIVE</option>
+      </select>
+      <i class="fa fa-caret-down form-select__arrow " aria-hidden="true"></i>
+    </div>
+  </div>
+</div>
+
+<div class="form-row form-row--flex form__row">
+  <div class="form-row form-row--inline">
+    <label class="form-label form-label--title">Idling Threshold</label>
+    <div class="form-select-wrapper form__input">
+      <%= select(:device, :idle_threshold, idle_alert_threshold_options(@device.idle_threshold), {}, class: 'form-input form-input--full-width form-select') %>
+      <i class="fa fa-caret-down form-select__arrow " aria-hidden="true"></i>
+    </div>
+  </div>
+
+  <div class="form-row form-row--inline form-checkbox">
+    <input type="checkbox" name="device[is_public]" value="1" <% if @device.is_public == 1 %>checked="checked"<% end %> />
+    <label class="form-label form-label--title">Make GeoRSS Public?</label>
+  </div>
+</div>
+
+<div id="last-device-form-element" class="form-row form-row--flex form__row">
+  <div class="form-row form-row--inline">
+    <label class="form-label form-label--title">Device Type:</label>
+    <div class="form-select-wrapper form__input">
+      <%= render partial: 'device_types', locals: { device_types: @device.available_device_types, selected_device_type: @device.device_type } %>
+      <i class="fa fa-caret-down form-select__arrow " aria-hidden="true"></i>
+    </div>
+  </div>
+
+  <div class="form-row form-row--inline">
+    <div class="form-select-wrapper form__input">Last Online: <%= @device.last_online_time ? display_local_dt(@device.last_online_time) :  'N/A' %></div>
+    <div class="form-select-wrapper form__input">Last Report: <%= @device.last_gps_reading ? display_local_dt(@device.last_gps_reading.recorded_at) : 'No Report Yet' %></div>
+  </div>
+</div>
+
+<div class="form-row form-row--flex">
+  <div class="form-row form-row--inline form-row--actions">
+    <input type="submit" value="Save" class="button button--primary button--large button--inline button--right" />
+    <%= link_to 'Cancel', admin_devices_path, class: "button button--secondary button--inline button--right" %>
+    <%= link_to 'Clear History', clear_history_admin_devices_path(id: @device.id), class: 'button button--tertiary button--large button--inline button--inline button--right' if @device.account.nil? and @device.last_gps_reading  %>
+  </div>
+</div>
+
+<% if params[:id] %>
+  <input type="hidden" name="id" value="<%= params[:id] %>" />
+<% end %>
+
+<%= javascript_include_tag 'device_form' %>

@@ -1,0 +1,155 @@
+@import "colors";
+@import "media_queries_breakpoints";
+
+.infobox {
+  width: 330px !important;
+  border-radius: 5px;
+  box-shadow: 0px 0px 8px $color-dust-gray;
+  background-color: $color-white;
+
+  img {
+    height: 9px;
+    width: 9px;
+    padding: 4px 4px 0 0;
+  }
+
+  &:before {
+    content: " ";
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #fff;
+    position: absolute;
+    bottom: -10px;
+    left: 130px;
+  }
+}
+
+.tt_container {
+  margin-bottom: 10px;
+  min-height: 90px;
+}
+
+.tt_container__sidebar {
+  position: absolute;
+  height: 100%;
+  background-color: $color-danube-blue;
+  color: $color-white;
+  font-size: 20px;
+  float: left;
+  width: 120px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+
+  &__date_container {
+    margin-left: 12px;
+    line-height: 23px;
+    position: absolute;
+    top: 50%;
+    margin-top: -40px;
+
+    &--small {
+      line-height: 20px;
+      margin-top: -33px;
+    }
+  }
+
+  &__text_container {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 50%;
+    margin-top: -12px;
+  }
+}
+
+.tt_container__body {
+  float: left;
+  width: 180px;
+  padding-left: 10px;
+  padding-top: 10px;
+  margin-left: 120px;
+
+  &--small {
+    width: 142px;
+  }
+
+  &__text {
+    font-size: 12px;
+  }
+
+  &__text-small {
+    color: $color-dust-gray;
+    font-size: 13px;
+    padding-top: 0px;
+  }
+
+  &__name {
+    font-size: 16px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    color: $color-astronaut-blue;
+    font-weight: bold;
+  }
+
+  &__link {
+    color: $color-havelock-blue !important;
+    text-decoration: none;
+
+    &--large {
+      overflow-wrap: break-word;
+    }
+  }
+}
+
+.geocode {
+  color: $color-havelock-blue !important;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-decoration: none;
+
+  @media #{$tablets} {
+    max-width: 100px;
+    margin-left: 0px;
+  }
+}
+
+.infobox__date {
+  font-family: Helvetica;
+  font-weight: 300;
+  font-size: 25px;
+
+  &--bold {
+    font-family: Helvetica;
+    font-weight: bold;
+    font-size: 28px;
+    margin-top: 10px;
+    line-height: 30px;
+  }
+
+  &--small {
+    font-family: Helvetica;
+    font-size: 12px;
+    font-weight: 300;
+  }
+}
+
+.marker-label {
+  color: black;
+  background-color: white;
+  border-radius: 6px;
+  height: 16px;
+  font-size: 10px;
+  text-align: center;
+  line-height: 16px;
+  padding: 0 4px;
+  font-family: Helvetica;
+  font-weight: 300;
+  box-shadow: 0px 0px 0.5px $color-dust-gray;
+  box-sizing: border-box;
+  min-width: 24px;
+  white-space: nowrap;
+}

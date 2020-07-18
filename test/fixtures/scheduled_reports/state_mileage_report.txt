@@ -1,0 +1,12 @@
+"Account:","Company Test"
+"Report Name:","Report Test"
+"Report Date:","10-Oct-2017"
+"Report Type:","1.Day"
+"From Date:","09-Nov-2017"
+"To Date:","10-Nov-2017"
+"Applies To:","All Fleets"
+
+"Device:","Device Test"
+"State","Mileage","Time"
+"TX","0.0","0 days, 0 hrs, 33 mins"
+"Totals:","0.0","0 days, 0 hrs, 33 mins"

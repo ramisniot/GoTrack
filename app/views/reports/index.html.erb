@@ -1,0 +1,29 @@
+<div id="top_head" class="top-head">
+  <span class="live_reports__title">Displaying <%= @devices.size %> device<% if @devices.size != 1 %>s<% end %> for</span>
+
+  <select id="type1" onchange="document.location.href='/reports?group_id=' + this.options[this.selectedIndex].value;" class="form-select live_reports__select">
+    <option value="all">All Fleets</option>
+    <% for group in @groups %>
+      <option value="<%= group.id %>"<% if current_group_value.to_i == group.id %>selected<% end %>><%= group.name %></option>
+    <% end %>
+    <option <% if current_group_value == "default" %>selected<% end %> value="default">Default</option>
+  </select>
+  <i class="fa fa-caret-down caret_down_icon" aria-hidden="true"></i>
+</div>
+
+<table class="panel_table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Last Report</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% for device in @devices %>
+    <tr>
+      <td><span class="live_reports__name_link"><a href="/reports/trip/<%= device.id %>"><%= device.name %></a></span> </td>
+      <td><span class="live_reports__text"><% if device.last_gps_reading %>Reported at <%= standard_date_and_time(device.last_gps_reading.recorded_at, Time.now) %><% else %>no report yet<% end %></span></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

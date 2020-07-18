@@ -1,0 +1,44 @@
+<% if flash[:alert] || flash[:error] %>
+  <div id="error_message" class='login_flash_message login_flash_message--error'><%= flash[:alert] || flash[:error] %></div>
+<% end %>
+
+<% if flash[:notice] %>
+  <div id="error_message" class='login_flash_message login_flash_message--success'><%= flash[:notice] %></div>
+<% end %>
+
+<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+  <table class="login-form__table">
+    <tr>
+      <th> Login </th>
+    </tr>
+    <tr>
+      <td><%= f.text_field :email, class: "login-form__input", placeholder: "Email:" %></td>
+    </tr>
+
+    <tr>
+      <td><%= f.password_field :password, class: "login-form__input", placeholder: "Password:" %></td>
+    </tr>
+
+    <tr>
+      <td>
+        <% if devise_mapping.rememberable? %>
+          <%= f.check_box :remember_me, class: "user_remember_me" %>
+          <%= f.label :remember_me, 'Remember me on this computer', class: "login__text-small" %>
+          <br>
+          <%= link_to('Forgot password?', new_user_password_path, { class: "login__link" }) %>
+        <% end %>
+      </td>
+    </tr>
+
+    <tr>
+      <td><%= f.submit 'Sign in', class: "login__btn" %></td>
+    </tr>
+    <% if desktop_override? and mobile_browser? %>
+      <tr>
+        <td>
+          <%= link_to 'View Mobile Site', set_ui_version_path(view_full_website: 'false') %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>

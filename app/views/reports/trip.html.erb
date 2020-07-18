@@ -1,0 +1,72 @@
+<%= render partial: 'report_header' %>
+
+<% if !@trip_legs.empty? %>
+  <div class="table-wrapper">
+    <table class="panel_table">
+      <tr>
+        <th></th>
+        <th>On</th>
+        <th>At</th>
+        <th>Departed</th>
+        <th>Travel Time</th>
+        <th>Miles</th>
+        <th>Arrived</th>
+        <th>At</th>
+        <th>Idle Time</th>
+        <th>Stop Time</th>
+      </tr>
+
+      <% last_leg_start, leg = nil %>
+
+      <% @trip_legs.each do |next_leg| %>
+        <% next unless next_leg.reading_start %>
+
+        <% if leg %>
+          <%= render partial: 'trip_leg_row', locals: { leg: leg, last_leg_start: last_leg_start, next_leg_start: next_leg.reading_start.recorded_at } %>
+          <% last_leg_start = leg.reading_start.recorded_at %>
+        <% end %>
+        <% leg = next_leg %>
+      <% end %>
+
+      <% if leg && leg.reading_stop %>
+        <%= render partial: 'trip_leg_row', locals: { leg: leg, last_leg_start: last_leg_start, next_leg_start: leg.reading_stop.nil? ? nil : leg.reading_stop.recorded_at } %>
+      <% end %>
+    </table>
+  </div>
+
+  <%= render partial: 'report_footer', locals: { entities: @trip_legs } %>
+
+  <div class="reports-trips-summary">
+    <div class="reports-trips-summary__box">
+      <div class="reports-trips-summary__label">Total Travel Time</div>
+      <div class="reports-trips-summary__value"><%= standard_duration(@total_travel_time) %></div>
+    </div>
+
+    <div class="reports-trips-summary__box">
+      <div class="reports-trips-summary__label">Total Distance</div>
+      <div class="reports-trips-summary__value"><%= sprintf('%2.1f',@total_distance) %></div>
+    </div>
+
+    <div class="reports-trips-summary__box">
+      <div class="reports-trips-summary__label">Total Idle Time</div>
+      <div class="reports-trips-summary__value"><%= standard_duration(@total_idle_time) %></div>
+    </div>
+
+    <div class="reports-trips-summary__box">
+      <div class="reports-trips-summary__label">Max Speed</div>
+      <div class="reports-trips-summary__value"><%= sprintf('%2.1f',@max_speed) if @max_speed %></div>
+    </div>
+  </div>
+
+<% else %>
+  <div class="empty-state reports-trips-empty-state">
+    <div class="empty-state__logo reports-trips-empty-state__logo">
+      <i class="fa fa-feed" aria-hidden="true"></i>
+    </div>
+    <div class="empty-state__text-container">
+      <span class="empty-state__text-container__title">No Starts/Stops found</span>
+    </div>
+  </div>
+<% end %>
+
+<%= render partial: '/shared/load_rgeo', locals: { frm_index: false, show_direction: false, show_phone_number: false } %>

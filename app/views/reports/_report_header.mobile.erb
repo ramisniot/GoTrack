@@ -1,0 +1,29 @@
+<select onchange="changeDevice(this.options[this.selectedIndex].value, '<%= params[:action] %>', '<%= @start_date %>', '<%= @end_date%>', '<%= params[:format] %>', '<%= params[:report_format] %>');">
+  <% for device in @device_names %>
+    <option value="<%= device.id %>" <% if params[:id].to_i == device.id %>selected="selected"<% end %>><%= device.name %></option>
+  <% end %>
+</select>
+
+<form action="/reports/<%= params[:action] %>/<%= params[:id] %>" method="get" data-ajax='false' style="display:inline">
+  <fieldset id="date" data-role="controlgroup" data-type="horizontal">
+    <%= hidden_field_tag :format, params[:format] %>
+    <%= hidden_field_tag :report_format, params[:report_format] %>
+    <% if @start_end_dates %>
+      <%= select_date(@start_date, :order=>[:month,:day,:year], :use_short_month => true, :prefix=>"start_date")%> <span class="dark_blue_header">to:</span>
+      <%= select_date(@end_date, :order=>[:month,:day,:year], :use_short_month => true, :prefix=>"end_date")%>
+    <% else %>
+      <%= select_date(@start_date, :order=>[:month,:day,:year], :use_short_month => true, :prefix=>"start_date")%>
+    <% end %>
+    <input name="commit" type="submit" value="Go" />
+  </fieldset>
+</form>
+
+<div id="result_count" class="result_count">
+  <% if !(@record_count <= 0) %>
+    <b><%= display_result_count(params[:page].to_i,@actual_record_count,page_size) %></b>
+  <% else %>
+    <b>No Results</b>
+  <% end %>
+</div>
+
+<% flag = false %>

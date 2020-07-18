@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <%= csrf_meta_tag %>
+    <title><%= @page_title %></title>
+    <%= render partial: 'layouts/includes/map_key' %>
+
+    <%= stylesheet_link_tag 'application' %>
+    <%= javascript_include_tag 'application' %>
+
+    <script>
+			var device_id;
+			var lat;
+			var lng;
+			var map;
+			var gmap;
+			var base_url = '/simulator/insert_reading?device_id=';
+
+			function load() {
+				if(window.default_map_type == undefined) {
+					window.default_map_type = google.maps.MapTypeId.ROADMAP;
+				}
+
+				window.centerLatLng = new google.maps.LatLng(37.0625, -95.677068);
+				gmap = new google.maps.Map($('#map'), {
+					zoom: 3,
+					center: window.centerLatLng,
+					streetViewControl: false,
+					scrollwheel: true,
+					mapTypeId: window.default_map_type,
+					mapTypeControl: true,
+				    mapTypeControlOptions: {
+				      mapTypeIds: [google.maps.MapTypeId.HYBRID, google.maps.MapTypeId.ROADMAP]
+				    },
+					scaleControl: true,
+					scaleControlOptions: {
+						position: google.maps.ScaleControlStyle.RIGHT
+					}
+				});
+				google.maps.event.addDomListener(gmap, "click", function(mouseevent) {
+			        lat = mouseevent.latLng.lat();
+			        lng = mouseevent.latLng.lng();
+			        device_id = $('#device_list').value
+			        insertData();
+				});
+
+			}
+
+			function insertData() {
+				var url = base_url + device_id + '&lat=' + lat + '&lng=' + lng;
+                $.get(url).done(function(transport) { /*Whatever*/ });
+			}
+
+			window.onload = load;
+		</script>
+		<style>
+			#devices {
+				float: left;
+				margin-right: 10px;
+				width: 200px;
+			}
+
+			#devices ul {
+				list-style-type: none;
+				padding: 0;
+				margin: 0;
+			}
+
+			#devices ul li {
+				background-color: #EEEEEE;
+				padding: 5px;
+				margin-bottom: 5px;
+			}
+
+			#reading_div {
+				background-color: #FFFF99;
+				padding: 10px;
+				font-size: 14px;
+				color: #333333;
+			}
+
+			#sim_map {
+				float: left;
+				width: 600px;
+				height: 400px;
+			}
+
+			.title {
+				font-size: 14px;
+				font-weight: bold;
+			}
+		</style>
+  </head>
+
+  <body>
+    <%= render partial: 'layouts/includes/header' %>
+
+    <div id="content" class="content">
+      <%= yield %>
+    </div>
+
+    <%= render partial: 'layouts/includes/footer' %>
+  </body>
+</html>

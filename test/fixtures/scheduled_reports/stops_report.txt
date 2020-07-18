@@ -1,0 +1,3 @@
+"Device","Location","Stop Duration (minutes)","Date","Time"
+"Device Test","Geofence; 20 NW Chipman Rd, Dallas TX","00h:03m","10-Nov-2017","10:22 AM"
+"Device Test","Geofence; 20 NW Chipman Rd, Dallas TX","00h:04m","10-Nov-2017","10:52 AM"

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+  <head>
+    <% if browser.device.mobile? || browser.device.tablet? %>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+    <% end %>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <%= csrf_meta_tag %>
+    <title><%= @page_title %></title>
+    <%= render partial: 'layouts/includes/map_key' %>
+
+    <%= stylesheet_link_tag 'application' %>
+    <%= javascript_include_tag 'application' %>
+    <%= javascript_include_tag 'reports-page' %>
+    <%= javascript_include_tag 'reverse-geocoding' %>
+    <%= javascript_include_tag 'reports-mobile' if browser.device.mobile? %>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+
+
+    <style>@page {size:landscape}</style>
+
+    <script type="text/javascript">
+        window.default_map_type = '<%= current_user().default_map_type.to_s.blank? ? DEFAULT_MAP_TYPE : current_user().default_map_type %>';
+    </script>
+
+    <%= render partial: '/shared/set_object_visibility_js' %>
+  </head>
+
+  <body <% if show_map(controller_name, action_name) %> onload="load(); google.maps.event.addDomListenerOnce(gmap, 'idle', zoomToReadingsBounds);" <% end %> >
+
+  <%= render partial: 'layouts/includes/header' %>
+
+  <% unless browser.device.mobile? %>
+    <% not_all_reports = params['controller'] != 'reports' || ['index', 'scheduled_reports'].include?(params[:action]) %>
+    <div class="tabbed-menu">
+      <div class="tabbed-menu__bar <%= not_all_reports ? '' : ' tabbed-menu__bar--crowded' %>">
+        <%= link_to_report('Scheduled Reports', 'wider-tab', 'reports', 'scheduled_reports') %>
+        <% if not_all_reports %>
+            <%= link_to_report('Live Reports', '', 'reports', 'index') %>
+        <% else %>
+            <%= link_to_report('Start/Stop', '', 'reports', 'trip', 'leg_detail') %>
+            <%= link_to_report('Detailed Activity', 'wider-tab', 'reports', 'all') %>
+            <%= link_to_report('Stops', '', 'reports', 'stop') %>
+            <%= link_to_report('Speeding', '', 'reports', 'speeding') if @device.account.max_speed %>
+            <%= link_to_report('Idling', '', 'reports', 'idle') %>
+            <%= link_to_report('Maintenance', 'wider-tab wider-tab--one-line', 'reports', 'maintenance') if @device.account.show_maintenance? %>
+            <%= link_to_report('Location', '', 'reports', 'geofence') %>
+            <%= link_to_report('Sensors', '', 'reports', 'digital_sensor') if @device.max_digital_sensors > 0 %>
+        <% end %>
+        <%= link_to_report('State Mileage Report', 'wider-tab', 'one_time_reports', 'new') if current_account.show_state_mileage_report? %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="reports">
+    <%= render partial: '/layouts/flash_message' %>
+    <%= yield %>
+  </div>
+
+  <%= render partial: 'layouts/includes/footer' %>
+  </body>
+</html>

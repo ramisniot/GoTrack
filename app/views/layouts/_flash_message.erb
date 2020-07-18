@@ -1,0 +1,19 @@
+<% if flash[:success] || flash[:error]  %>
+  <div id="flash_message" class="flash-message-box">
+    <% if flash[:success] %>
+      <div class="flash-message-icon flash-message-icon--success">
+        <i class="fa fa-check flash-message-icon__icon" ></i>
+      </div>
+    <% else %>
+      <div class="flash-message-icon flash-message-icon--error">
+        <i class="fa fa-times flash-message-icon__icon" ></i>
+      </div>
+    <% end %>
+    <div class="flash-message-textbox">
+      <%= (flash[:success] || flash[:error]).html_safe %>
+    </div>
+    <div id="flash_message_close" class="flash-message-close-container">
+      <i class="fa fa-times flash-message-close-container__icon"></i>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,50 @@
+<div class="search-bar <%= 'search-bar--mobile' if browser.device.mobile? %> search-bar--flexible reports-header">
+
+  <form action='<%= "/reports/#{params[:action]}/#{params[:id]}" %>' method="get" class="search-bar__form reports-outer-form">
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+    <div class="search-bar__form__fields">
+      <div class="search-bar__form__field">
+        <label class="search-bar__label">For</label>
+        <select class="form-select form-select__mobile" onchange="changeDevice(this.options[this.selectedIndex].value, '<%= params[:action] %>', '<%= parse_url_date(params['start_date']) %>', '<%= parse_url_date(params['end_date']) %>', this.form);">
+          <% for device in @device_names %>
+            <option value="<%= device.id %>" <% if params[:id].to_i == device.id %>selected="selected"<% end %>><%= device_short_name(device) %></option>
+          <% end %>
+        </select>
+        <i class="fa fa-caret-down form-select__arrow"></i>
+      </div>
+      <div class="search-bar__form__field search-bar__form__field--margin-small">
+        <div class="search-bar__form__field-group">
+          <div class="search-bar__form__field">
+            <label class="search-bar__label">
+              <% if @start_end_dates %>
+                <span class="days-only">From</span>
+                <span class="time-frame">On</span>
+              <% else %>
+                On
+              <% end %>
+            </label>
+            <%= select_date_with_arrow(@start_date, { order: [:month, :day, :year], use_short_month: true, prefix: 'start_date' }, { class: 'form-select' }) %>
+          </div>
+          <% if @start_end_dates %>
+            <div class="search-bar__form__field days-only">
+              <label class="search-bar__label">To</label>
+              <%= select_date_with_arrow(@end_date, { order: [:month, :day, :year], use_short_month: true, prefix: 'end_date' }, { class: 'form-select' }) %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <%= render partial: "time_frame" %>
+    </div>
+    <div class="search-bar__form__actions">
+      <div class="search-bar__form__action">
+        <input class="button button--primary" name="commit" type="submit" value="Go" />
+      </div>
+
+      <% if @record_count > 0 %>
+        <div class="search-bar__form__action">
+          <a href="/reports/export/<%=params[:id]%>?end_date=<%= @end_date %>&start_date=<%= @start_date%>&type=<%=params[:action] %>" target="_blank" title="Export  <%= @record_count%> readings for selected timeframe in CSV format" class="button button--primary">Export</a>
+        </div>
+      <% end %>
+    </div>
+  </form>
+</div>

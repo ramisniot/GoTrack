@@ -1,0 +1,30 @@
+.display {
+  &--flex {
+    display: flex;
+  }
+
+  &--flex-space-between {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.width {
+  &--full {
+    width: 100%;
+  }
+}
+
+.hide {
+  display: none;
+}
+
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.clearfix {
+  clear: both;
+}

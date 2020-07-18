@@ -1,0 +1,3 @@
+Dear dennis baldwin,
+
+device 1 seems to be offline. This device last communicated 6 months ago.

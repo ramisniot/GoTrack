@@ -1,0 +1,128 @@
+<div class="users">
+  <div class="page-title users__title">Edit User</div>
+
+  <%= render partial: '/layouts/flash_message'%>
+
+  <%= form_tag user_path(@user), method: :put, onsubmit: "return ValidateForm(#{@user.id})", class: 'form' do %>
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
+    <div class="form-row form-row--flex">
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">First Name</div>
+        <input
+          type="text"
+          name="user[first_name]"
+          size="20"
+          value="<%= @user.first_name %>"
+          maxlength="<%= User::MAX_LENGTH[:first_name] %>"
+          class="form-input form-input--full-width" />
+      </div>
+
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">Last Name</div>
+        <input
+          type="text"
+          name="user[last_name]"
+          size="20"
+          value="<%= @user.last_name %>"
+          maxlength="<%= User::MAX_LENGTH[:last_name] %>"
+          class="form-input form-input--full-width" />
+      </div>
+    </div>
+
+    <div class="form-row form-row--flex">
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">Email</div>
+        <input
+          type="text"
+          name="user[email]"
+          title="Email"
+          id="email"
+          size="20"
+          value="<%= @user.email %>"
+          class="form-input form-input--full-width" />
+      </div>
+
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">Permission Level</div>
+        <div class="form-select-wrapper form__input">
+          <%= select(
+              :user,
+              :role,
+              options_for_roles(current_user.assignable_roles),
+              { selected: @user.role },
+              { disabled: !current_user.is_admin? || current_user == @user,
+                class: 'form-select form-input--full-width' }) %>
+          <i class="fa fa-caret-down form-select__arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row form-row--flex">
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">Home Page</div>
+        <div class="form-select-wrapper form__input">
+          <select name="user[default_home_action]" class="form-select form-input--full-width">
+            <option value="locations"<% if @user.default_home_action == 'locations' %> selected<% end %>>
+              Overview: Locations
+            </option>
+            <option value="vehicle_status"<% if @user.default_home_action == 'vehicle_status' %> selected<% end %>>
+              Overview: Device Status
+            </option>
+          </select>
+          <i class="fa fa-caret-down form-select__arrow " aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">Default Selection</div>
+        <div class="form-select-wrapper">
+          <%= render(
+              partial: 'layouts/includes/select_group_or_device',
+              locals: {
+                select_name: 'user[default_home_selection]',
+                select_class: 'form-select form-input--full-width'
+              })
+          %>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row form-row--flex">
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">Existing Password</div>
+        <input
+          type="password"
+          name="password"
+          id="existing_password"
+          class="form-input form-input--full-width" />
+      </div>
+    </div>
+
+    <div class="form-row form-row--flex">
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">New Password</div>
+        <input
+          type="password"
+          name="new_password"
+          id="new_password"
+          class="form-input form-input--full-width" />
+      </div>
+
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">Confirm New Password</div>
+        <input type="password"
+          name="confirm_new_password"
+          id="confirm_new_password"
+          class="form-input form-input--full-width" />
+      </div>
+    </div>
+
+    <div class="form-row form-row--flex">
+      <div class="form-row form-row--inline form-row--actions">
+        <input class="button button--primary button--large button--inline button--right" type="submit" value="Update" />
+        <%= link_to 'Cancel', users_path, class: 'button button--secondary button--inline button--right' %>
+      </div>
+    </div>
+  <% end %>
+</div>

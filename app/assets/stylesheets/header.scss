@@ -1,0 +1,235 @@
+@import "colors";
+@import "media_queries_breakpoints";
+
+.header {
+  padding: 0;
+  margin: 0;
+  background-color: $color-mine-shaft-gray;
+  position: relative;
+}
+
+.header-mobile {
+  position: sticky;
+  background-color:  $color-mine-shaft-gray;
+  height: 9%;
+  width: 100%;
+
+  @media #{$smartphones-landscape} {
+    height: 13%;
+  }
+
+  & ul {
+    height: 100%;
+  }
+
+  & li {
+    float: left;
+    width: 33.33%;
+    display: flex;
+    height: 100%;
+  }
+
+  & a {
+    text-align: center;
+    width: 100%;
+    font-size: 17px;
+    color: $color-silver;
+    height: 100%;
+    text-decoration: none;
+
+    & span {
+      display: inline-flex;
+      align-items: center;
+      height: 100%;
+    }
+  }
+
+  & .selected-menu-tab a {
+    color: $color-white;
+    box-shadow: 0 -10px 3px -3px $color-crusta-orange inset;
+  }
+}
+
+.header-column {
+  height: 100%;
+  width: 33.3%;
+  float: left;
+}
+
+.user-options {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  -webkit-transition: all .15s ease;
+  -moz-transition: all .15s ease;
+  -ms-transition: all .15s ease;
+  -o-transition: all .15s ease;
+
+  &--hidden {
+    opacity: 0;
+    height: 1px;
+    z-index: -1;
+  }
+
+  &--show {
+    opacity: 1;
+    height: auto;
+    z-index: 1;
+  }
+}
+
+.user-option {
+  background-color: $color-carbon-gray;
+  font-size: 14px;
+
+  &__icon {
+    margin-right: 5px;
+  }
+
+  &:hover {
+    background-color: $color-mine-shaft-gray;
+  }
+
+  & li a {
+    text-decoration: none;
+    padding: 15px 45px;
+    display: block;
+    cursor: pointer;
+  }
+}
+
+.header-top {
+  width: 100%;
+  display: flex;
+
+  &__left {
+    display: inline-block;
+    margin: 20px 0 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__right {
+    flex-grow: 1;
+  }
+}
+
+.vertical-separator {
+  margin: 0 20px;
+  width: 0.5px;
+  height: 30px;
+  display: inline-block;
+  background-color: $color-white;
+}
+
+.header-bottom {
+  width: 100%;
+}
+
+.user-name {
+  padding: 10px;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  &__icon {
+    margin-right: 15px;
+    font-size: 15px;
+  }
+
+  &__text {
+    margin-right: 15px;
+  }
+
+  &-options {
+    margin-right: 10px;
+    font-size: 10px;
+  }
+}
+
+.logged-user {
+  margin: 10px 10px 0 0;
+  float: right;
+  font-size: 10px;
+  color: $color-white;
+
+  & a:link, & a:visited {
+    color: $color-white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: normal;
+  }
+
+  & a:hover {
+    color: $color-white;
+    text-decoration: none;
+  }
+}
+
+.nav-tabs-admin ul li {
+  float: left;
+}
+
+.nav-tabs {
+  background-color: $color-mine-shaft-gray;
+  width: 100%;
+  bottom: 0px;
+
+  & ul {
+    padding: 0;
+    margin: 0;
+    height: 25px;
+  }
+
+  & li {
+    float: right;
+    list-style-type: none;
+    display: inline;
+    height: 100%;
+  }
+
+  & a {
+    color: $color-white;
+    text-decoration: none;
+    padding: 5px 22px;
+    font-weight: 100;
+
+    @media #{$tablets} {
+      padding: 5px 20px;
+    }
+
+    &:hover {
+      box-shadow: 0 5px 0 $color-crusta-orange;
+    }
+  }
+
+  & .selected a {
+    font-weight: bold;
+    height: 100%;
+    box-shadow: 0 5px 0 $color-crusta-orange;
+  }
+
+  & .selected_subnav a {
+    font-weight: bold;
+    color: $color-black;
+    padding: 5px 10px;
+
+    &:hover {
+      color: $color-black;
+    }
+  }
+}
+
+.gotrack-logo {
+  display: inline-block;
+}
+
+.company {
+  color: $color-white;
+  font-size: 18px;
+  font-weight: 200;
+  display: inline-block;
+  vertical-align: top;
+}

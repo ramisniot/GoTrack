@@ -1,0 +1,13 @@
+.bundle
+.ruby-gemset
+db/*.sqlite3
+log/
+tmp/
+.idea/
+coverage
+test/reports/*.xml
+db/structure.sql
+database.yml
+
+# Ignore application configuration
+/config/application.yml

@@ -1,0 +1,13 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="page-header__title-container">
+      <div class="page-title">
+        Reset Maintenance Task
+      </div>
+    </div>
+  </div>
+
+  <%= form_for @maintenance, url: reset_maintenance_path, html: { method: :post } do |f| %>
+      <%= render partial: 'fields', locals: {f: f} %>
+  <% end %>
+</div>

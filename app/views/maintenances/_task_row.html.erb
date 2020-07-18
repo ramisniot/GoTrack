@@ -1,0 +1,36 @@
+<% status = get_status(task.scheduled_time.blank? ? task.target_mileage-device.total_mileage : task.scheduled_time, !task.completed_at.blank?) unless task.blank? %>
+<% status_string = status_string(status) if status %>
+<% type = (task.blank? || task.scheduled_time.blank?) ? Maintenance::MILEAGE_TYPE  : Maintenance::SCHEDULED_TYPE%>
+
+<tr class="row-<%= status_string.gsub(/ /, '').downcase if status_string %>">
+  <td colspan="2">
+    <%= device.name %>
+  </td>
+  <td colspan="2" class="ellipsis">
+    <% if task.blank? %>
+      "None"
+    <% else %>
+      <span title="<%= task.description_task %>"> <%= task.description_task %> </span>
+    <% end %>
+  </td>
+  <td colspan="2">
+    <%= get_due(task.scheduled_time.blank? ? (task.target_mileage-device.total_mileage).round(1) : task.scheduled_time) unless task.blank? %>
+  </td>
+  <td colspan="2" title='<%= get_tooltip(status, type) %>'>
+    <%= status ? (status == Maintenance::STATUS_COMPLETED ? "Completed on #{task.completed_at.in_time_zone(current_user.time_zone).strftime("%b %d, %Y-%H:%M")}" : status_string) : '' %>
+  </td>
+  <td colspan="1">
+    <div class="table-actions">
+      <% unless task.blank? %>
+        <%= link_to(maintenance_path(id: task.id), title: 'View maintenance') do %>
+          <i class="fa fa-eye link-icon"></i>
+        <% end %>
+      <% end %>
+      <% if !view_user_and_unauthorized?('maintenances', 'destroy') %>
+        <%= link_to(maintenance_path(id: task.id), title: 'Delete maintenance', method: :delete, data: { confirm: 'Are you sure?'}) do %>
+          <i class="fa fa-trash link-icon"></i>
+        <% end %>
+      <% end %>
+    </div>
+  </td>
+</tr>

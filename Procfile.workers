@@ -1,0 +1,2 @@
+worker_rabbitmq: rake consumers:save_messages_consumer_start[0]
+worker_sidekiq: sidekiq

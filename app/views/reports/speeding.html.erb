@@ -1,0 +1,39 @@
+<%= render partial: 'report_header' %>
+
+<div class="reports-content">
+  <div id="left_panel" class="reports-content__left">
+    <% if !@readings.empty? %>
+  	 <table class="panel_table panel_table--flexible">
+        <tr>
+          <th>Location</th>
+          <th>Speed (mph)</th>
+          <th>Event Type</th>
+          <th>When</th>
+        </tr>
+     	  <% previous_datetime = nil %>
+        <% for reading in @readings %>
+          <tr id="row<%= reading.id %>">
+            <td>
+              <%= standard_location(@device, reading) %>
+              <% unless reading.short_address == ', ' %>
+                <a href="javascript:centerMapOnReading(<%= reading.id %>);highlightRow(<%= reading.id %>)" title="Center map on this location" >(map it)</a>
+			        <% end %>
+            </td>
+            <td><%= reading.speed %></td>
+            <td><%= render partial: 'event_display', locals: { reading: reading } %></td>
+            <td><%= standard_date_and_time(reading.recorded_at, previous_datetime) %></td>
+            <% previous_datetime = reading.recorded_at %>
+          </tr>
+        <% end %>
+      </table>
+    <% else %>
+      <%= render partial: 'empty_state', locals: { message: 'No readings found.' } %>
+    <% end %>
+  </div>
+
+  <%= render partial: 'map_and_toggler', locals: { with_toggler: true } %>
+</div>
+
+<%= render partial: '/shared/load_rgeo', locals: { frm_index: false, show_direction: true, show_phone_number: false } %>
+
+<%= render partial: 'report_footer', locals: { entities: @readings } %>

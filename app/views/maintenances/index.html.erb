@@ -1,0 +1,109 @@
+<div class="maintenance">
+  <%= render partial: '/layouts/flash_message' %>
+  <% flash.clear %>
+
+  <div class="page-header">
+    <div class="page-header__title-container">
+      <span class="page-title">
+        Current Maintenance Tasks by devices
+      </span>
+    </div>
+    <% if view_user_and_unauthorized?('maintenances', 'new') %>
+      <div class="page-header__action">
+        <span class="button button--disabled button--x-large">Create Maintenance Task</span>
+      </div>
+    <% elsif !@maintenances.nil? && !@maintenances.empty? %>
+      <div class="page-header__action">
+        <%= link_to 'Create Maintenance Task', new_maintenance_path, class: 'button button--primary button--x-large' %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="maintenance__form search-bar search-bar--flexible">
+    <%= form_tag maintenances_path, method: :get, class: 'width--full display--flex' do -%>
+      <div class="maintenance__form__column">
+        <span class="maintenance__form__title">Device</span>
+        <div class="form-select-wrapper">
+          <%= select_tag('device', options_for_select([['All Devices', 'all']]+@devices_list.collect { |d| [d.name, d.id] }, selected: params[:device].to_i), class: 'form-input form-input--full-width form-select') %>
+          <i class="fa fa-caret-down form-select__arrow maintenance__form__select__caret" aria-hidden="true"></i>
+        </div>
+
+        <span class="maintenance__form__title maintenance__form__title--bottom">Due Date</span>
+        <div class="display--flex-space-between">
+          <div class="maintenance__form__item width--full">
+            <input type="text" id="maintenance_from_date_picker" class="form-input form-input--full-width form-date-picker" name='from' value='<%= params[:from] if params[:from] %>' placeholder="From" />
+            <i class="fa fa-calendar form-date-picker__calendar-caret" aria-hidden="true" onclick="showFromDatePicker()"></i>
+          </div>
+
+          <div class="maintenance__form__item width--full">
+            <input type="text" id="maintenance_to_date_picker" class="form-input form-input--full-width form-date-picker form-date-picker--right" name='to' value='<%= params[:to] if params[:to] %>' placeholder="To" />
+            <i class="fa fa-calendar form-date-picker__calendar-caret" aria-hidden="true" onclick="showToDatePicker()"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="maintenance__form__column">
+        <span class="maintenance__form__title">Task description</span>
+        <%= text_field_tag 'task_desc', params[:task_desc], class: 'form-input form-input--full-width', placeholder: 'e.g: devices' %>
+
+        <span class="maintenance__form__title maintenance__form__title--bottom">Due Mileage</span>
+        <div class="form-select-wrapper">
+          <%= select_tag('mileage', options_for_select([['All Mileages', 'all']]+['100', '200', '300', '400', '500', '750', '1000', '1500', '2000', '2500', '3000', '3500', '4000', '4500', '5000', '5500', '6000', '6500', '7000', '7500', '8000', '8500', '9000', '9500', '10000', '11000', '12000', '13000', '14000', '15000', '16000', '17000', '18000', '19000', '20000', '21000', '22000', '23000', '24000', '25000', '26000', '27000', '28000', '29000', '30000', '31000', '32000', '33000', '34000', '35000', '36000', '37000', '38000', '39000', '40000', '41000', '42000', '43000', '44000', '45000', '46000', '47000', '48000', '49000', '50000', '51000', '52000', '53000', '54000', '55000', '56000', '57000', '58000', '59000', '60000', '61000', '62000', '63000', '64000', '65000', '66000', '67000', '68000', '69000', '70000', '71000', '72000', '73000', '74000', '75000', '76000', '77000', '78000', '79000', '80000', '81000', '82000', '83000', '84000', '85000', '86000', '87000', '88000', '89000', '90000', '91000', '92000', '93000', '94000', '95000', '96000', '97000', '98000', '99000', '100000'], selected: params[:mileage]), class: 'form-input form-input--full-width form-select') %>
+          <i class="fa fa-caret-down form-select__arrow maintenance__form__select__caret" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <div class="maintenance__form__column maintenance__form__column--status-filter">
+        <span class="maintenance__form__title">Status</span>
+        <div class="form-select-wrapper">
+          <%= select_tag('status', options_for_select([['All Status', 'all'], ['OK', Maintenance::STATUS_OK], ['PENDING', Maintenance::STATUS_PENDING], ['DUE', Maintenance::STATUS_DUE], ['PAST DUE', Maintenance::STATUS_PDUE], ['COMPLETED', Maintenance::STATUS_COMPLETED]], selected: ((params[:status].blank?) || (params[:status]=='all')) ? 'all' : params[:status].to_i), class: 'form-input form-input--full-width form-select') %>
+          <i class="fa fa-caret-down form-select__arrow maintenance__form__select__caret" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <div class="maintenance__form__column maintenance__form__column--button-container">
+          <%= submit_tag 'Filter', class: 'button button--primary' %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @maintenances.nil? || @maintenances.empty? %>
+    <div class="maintenance__empty-state">
+      <div class="empty-state">
+        <div class="empty-state__logo">
+          <i class="fa fa-wrench" aria-hidden="true"></i>
+        </div>
+        <div class="empty-state__button-container">
+          <a href="<%= new_maintenance_path %>" title="Create Maintenance Task" class="button button--primary button--x-large">Create Maintenance Task</a>
+        </div>
+        <div class="empty-state__text-container">
+          <span class="empty-state__text-container__title">No Maintenance tasks found. You can click the button above to create a new one.</span>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="table-wrapper">
+      <table class="panel_table maintenance__table">
+        <thead>
+          <tr>
+            <th colspan="2">Device</th>
+            <th colspan="2">Maintenance Task</th>
+            <th colspan="2">Due</th>
+            <th colspan="2">Status</th>
+            <th colspan="1">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @maintenances.each do |task| %>
+            <%= render partial: "task_row", locals: { device: task.device, task: task } %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= render partial: '/layouts/pagination', locals: { data: @maintenances } %>
+
+    <div class="maintenance__entries">
+      <%= page_entries_info @maintenances, entry_name: 'item' %>
+    <div>
+  <% end %>
+</div>

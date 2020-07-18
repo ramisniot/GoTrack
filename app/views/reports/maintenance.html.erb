@@ -1,0 +1,46 @@
+<%= render partial: 'report_header' %>
+
+<table class="width--full" id="main_table">
+  <tr>
+    <td id="left_panel" valign="top">
+
+      <% if @maintenances.empty? %>
+        <div class="empty-state maintenance-empty-state">
+          <div class="empty-state__logo maintenance-empty-state__logo">
+            <i class="fa fa-wrench" aria-hidden="true"></i>
+          </div>
+          <div class="empty-state__button-container">
+            <%= link_to 'Add Maintenance Task', new_maintenance_path(device_id: @device.id), class: 'button button--primary button--large' %>
+          </div>
+          <div class="empty-state__text-container maintenance-empty-state__title">
+            <span class="empty-state__text-container__title">No Maintenance Completions found</span>
+          </div>
+        </div>
+      <% else %>
+        <table class="panel_table">
+          <tr>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Creation Date</th>
+            <th>Target</th>
+            <th>Actual</th>
+            <th>Completion Date</th>
+          </tr>
+
+          <% for maint in @maintenances %>
+            <tr class="<%= cycle('dark_row', 'light_row') %>" id="row<%= maint.id %>">
+              <td><%= maint.description_task %></td>
+              <td><%= maint.type_string %></td>
+              <td><%= standard_date(maint.created_at) %></td>
+              <td><%= maint.target_string %></td>
+              <td><%= maint.actual_string %></td>
+              <td><%= standard_date(maint.completed_at) %></td>
+            </tr>
+          <% end %>
+        </table>
+      <% end %>
+    </td>
+  </tr>
+</table>
+
+<%= render partial: 'report_footer', locals: { entities: @maintenances } %>

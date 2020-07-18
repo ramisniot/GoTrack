@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!-- Fast v2.0, (c) August 2013 -->
+<html>
+<head>
+  <% if browser.device.mobile? || browser.device.tablet? %>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <% end %>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <title><%= @page_title %></title>
+  <%= csrf_meta_tag %>
+
+  <style type="text/css" media="print">@page {size: landscape}</style>
+  <%= render partial: 'layouts/includes/map_key' %>
+  <script type="text/javascript">
+      window.default_map_type = '<%= current_user.default_map_type.to_s.blank? ? DEFAULT_MAP_TYPE : current_user.default_map_type %>';
+  </script>
+
+  <%= stylesheet_link_tag 'application' %>
+  <%= javascript_include_tag 'application' %>
+  <%= javascript_include_tag 'home-page' %>
+  <%= javascript_include_tag 'reverse-geocoding' %>
+
+  <%= render partial: '/shared/set_object_visibility_js' %>
+  <link rel="apple-touch-icon" sizes="57x57" href="<%= image_path('apple-icon-57x57.png') %>" />
+  <link rel="apple-touch-icon" sizes="72x72" href="<%= image_path('apple-icon-72x72.png') %>" />
+  <link rel="apple-touch-icon" sizes="114x114" href="<%= image_path('apple-icon-114x114.png') %>" />
+  <link rel="apple-touch-icon" sizes="144x144" href="<%= image_path('apple-icon-144x144.png') %>" />
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+</head>
+
+<script>
+    <% if user_session[:group_value] %>
+    var grp_id = '<%= user_session[:group_value] %>';
+    <% end %>
+</script>
+
+<body onload="load();">
+
+  <%= render partial: 'layouts/includes/header' %>
+
+  <% unless browser.device.mobile? %>
+    <div class="tabbed-menu">
+      <div class="tabbed-menu__bar">
+        <a href="<%= url_for(controller: 'home', action: 'locations') %>"<%= ' class="current-tab"'.html_safe if params[:action] == 'locations' %>><span>Map</span></a>
+        <a href="<%= url_for(controller: 'home', action: 'vehicle_status') %>"<%= ' class="current-tab"'.html_safe if params[:action] == 'vehicle_status' %>><span>Device Status</span></a>
+        <% if current_account.show_statistics %> <a href="<%= url_for(controller: 'home', action: 'statistics') %>" <%= 'class="current-tab"'.html_safe if params[:action] == 'statistics' %> ><span>Statistics</span></a> <% end %>
+        <% if params[:action] == 'dispatch_device' %> <a href="#" class="current-tab"><span>Dispatch</span></a><% end %>
+      &nbsp;&nbsp; <%= render partial: 'layouts/includes/switch_account', locals: { path: request.fullpath } %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="overview">
+
+    <div>
+      <%= render partial: '/layouts/flash_message' %>
+    </div>
+
+    <% unless browser.device.mobile? %>
+      <div class="search-bar">
+        <div class="search-bar__form__filter">
+          <label class="search-bar__label">Results for</label>
+          <div class="form-select-wrapper">
+            <%= render(
+                  partial: 'layouts/includes/select_group_or_device',
+                  locals: {
+                    select_name: 'group_type',
+                    select_class: 'form-select width--full',
+                    select_onchange: 'select_action()'
+                    }) %>
+          </div>
+        </div>
+        <div class="overview-search-bar__outer-form">
+          <%= form_tag(action: :dispatch) do |f| %>
+            <div class="search-bar__form">
+              <div class="overview-search-bar__address">
+                <label class="search-bar__label">Dispatch Address</label>
+                <input type="text" name="address" value="<%= params[:address] %>" placeholder=" eg: Brownwood, TX" class="form-input search-bar__form__input" />
+              </div>
+              <div class="search-bar__form__check-option">
+                <input type="checkbox" id="view_geofences" class="search-bar__form__check-option__box" onclick="toggleGeofenceVisibility(this)" <%= current_user.view_overlays?(:geofences) ? 'checked="checked" ' : '' %>/>
+                <label class="search-bar__label search-bar__form__check-option__text">View Locations?</label>
+              </div>
+              <div class="search-bar__form__actions">
+                <div class="search-bar__form__action">
+                  <%= submit_tag 'Go', class: 'button button--primary' %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if update_readings_automatically? %>
+      <div id="updating" class="overview-updating">
+        Updating locations...
+      </div>
+      <% if browser.device.mobile? %>
+        <div
+          id="map"
+          class="overview-mobile-map-wrapper"
+          data-default-map-center="<%= default_map_center_json %>">
+        </div>
+      <% else %>
+        <div id="map_holder" class="map-holder">
+          <div
+            id="map"
+            class="map-wrapper"
+            data-default-map-center="<%= default_map_center_json %>">
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <% if !browser.device.mobile? %>
+      <% if @device_count == 0 %>
+        <div class="overview-devices__empty">
+          Your GoTrack order is currently being processed. When your device has been activated it will appear in the summary table below.
+          You'll then be able to rename the device by going to the <a href="/devices" title="Manage your device">Devices</a> tab.
+          Feel free to add additional <a href="/users" title="Manage your users">users</a> or change your <a href="/settings" title="Manage your settings">settings</a>.
+        </div>
+      <% end %>
+      <%= yield %>
+    <% else %>
+      <%= render partial: 'prepare_devices' %>
+    <% end %>
+  </div>
+
+  <% if update_readings_automatically? %>
+    <script>
+      window.setInterval("updateLocations();", 60000);
+      function updateLocations() {
+        if (grp_id) {
+          getRecentReadings(true, grp_id);
+        } else {
+          getRecentReadings(false);
+        }
+        getLastReadingInfo();
+      }
+    </script>
+  <% end %>
+
+  <%= render partial: 'layouts/includes/footer' %>
+</body>
+</html>

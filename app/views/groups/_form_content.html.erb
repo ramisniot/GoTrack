@@ -1,0 +1,75 @@
+  <div class="page-header">
+    <div class="page-header__title-container">
+      <% if on_edit %>
+        <div class="page-title">Edit Fleet</div>
+      <% else %>
+        <div class="page-title">Create a Fleet</div>
+        <div class="new-fleet-form__main-description">
+          Creating a fleet is simple. Just enter a fleet name, select an icon color, and specify the devices you want to associate with this fleet.
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="new-fleet-form">
+    <div class="new-fleet-form__cell">
+      <div class="form-label form-label--title">Fleet Name</div>
+      <input type="text" id="group_name" class="form-input form-input--full-width" name="name" placeholder="e.g. Name" value="<%= flash[:group_name]%>">
+      <div class="form-label form-label--title new-fleet-form__icon-title">Select Icon</div>
+      <div class="new-fleet-form__icon-list">
+        <ul>
+          <li>
+            <%= image_tag('icons/blue_small.png', class: 'sel_icon__icon') %>
+            <% if on_edit %>
+              <input name="sel" <% if @group.try(:image_value) == 1 %>checked="checked" <%end%> type="radio"  value="1"  />
+            <% else %>
+              <input name="sel" checked="checked" type="radio" value="1" />
+            <% end %>
+          </li>
+
+          <% (2..8).each do |i| %>
+            <li>
+              <%= render_icon(i) %>
+              <input name="sel" type="radio" <% if @group.try(:image_value) == i %>checked="checked" <%end%>  value="<%= i %>"/>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+      <% if on_edit %>
+        <div class="form-label form-label--title new-fleet-form__icon-title">Fleet Speed Limit</div>
+        <div class="new-fleet-form__description">
+          This setting applies to all devices in this fleet, and will override any other speed limits.
+        </div>
+        <input type="text" id="max_speed" name="max_speed" class="form-input form-input--small-width" value="<%= flash[:max_speed]%>" />
+        <div class="new-fleet-form__description new-fleet-form__description--inline">MPH</div>
+      <% end %>
+    </div>
+
+    <div class="new-fleet-form__cell">
+      <div class="form-label form-label--title">Select Devices</div>
+      <div class="new-fleet-form__description">
+        Some devices may already be associated with another fleet.
+        In this case the fleet name displays red after the device name.
+        You can easily reassign any device to this fleet by clicking one or more checkboxes below.
+      </div>
+      <div class="new-fleet-form__select-devices__list-container">
+        <ul class="new-fleet-form__select-devices__list" >
+          <% @devices.each do |device| %>
+            <li>
+              <input type="checkbox" class="new-fleet-form__select-devices__checkbox" multiple name="select_devices[]"<% if device.group_id == @group.try(:id) %> checked="checked" <%end%> value="<%= device.id %>"></input>
+              <div class="new-fleet-form__select-devices__device ellipsis" title="<%= device.name %>">
+                <%= device.name %>
+              </div>
+              <% @group_devices.each do |group_device| %>
+                <% if device.id == group_device.id %>
+                  <div class="new-fleet-form__select-devices__fleet ellipsis">
+                    <% if group_device.group.id != @group.try(:id) %>(<%= group_device.group.name%>)<% end %>
+                  </div>
+                <%end %>
+              <%end %>
+            </li>
+          <%end %>
+        </ul>
+      </div>
+    </div>
+  </div>

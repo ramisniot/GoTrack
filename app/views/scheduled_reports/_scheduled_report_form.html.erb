@@ -1,0 +1,91 @@
+<%= form_for(@scheduled_report) do |f| %>
+  <% unless @scheduled_report.errors.empty? %>
+    <%= errors_for @scheduled_report %>
+  <% end %>
+
+  <div class="form">
+    <%= f.hidden_field :id %>
+    <div class="form-row form-row--flex form__row">
+      <div class="form-row form-row--inline">
+        <%= f.label :report_name, 'Name', class: 'form-label form-label--title' %>
+        <%= f.text_field :report_name, class: 'form-input form-input--full-width form__input' %>
+      </div>
+
+      <div class="form-row form-row--inline">
+        <%= f.label :report_type, 'Type', class: 'form-label form-label--title' %>
+        <div class="form-select-wrapper form__input">
+          <%= f.select(:report_type, report_type_options(current_account.show_state_mileage_report?), { selected: @scheduled_report.report_type.blank? ? '' : @scheduled_report.report_type }, { class: "form-input form-input--full-width form-select" } )%>
+          <i class="fa fa-caret-down form-select__arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row form-row--flex form__row">
+      <div class="form-row form-row--inline">
+        <%= f.label :scheduled_for, 'Scheduled for delivery at', class: 'form-label form-label--title' %>
+        <div class="form-select-wrapper form__input">
+          <%= f.datetime_select :scheduled_for,
+            { order: [:day, :month, :year, :hour], discard_minute: true, ampm: true, default: 24.hours.from_now.beginning_of_hour, use_short_month: true,
+                date_separator: '<i class="fa fa-caret-down form-select__arrow form-date-picker__arrow-separator" aria-hidden="true"></i>', datetime_separator: '<i class="fa fa-caret-down form-select__arrow" aria-hidden="true"></i><div class="new-scheduled-report__separators new-scheduled-report__separators--datetime">-</div>' },
+            { class: 'form-select' }
+          %>
+          <i class="fa fa-caret-down form-select__arrow" aria-hidden="true"></i>
+        </div>
+        <br />
+          <span class="new-scheduled-report__datetime-text">Report span will not include delivery date; <br />
+          a report delivered on the 8<sup>th</sup> will only include data through the 7<sup>th</sup>.</span>
+      </div>
+
+      <div class="form-row form-row--inline">
+        <%= f.label :report_type, 'Applies to:', class: 'form-label form-label--title' %>
+        <div class="form-select-wrapper form__input">
+          <%= select_tag(
+                'scheduled_report[report_params][group_id]',
+                '<option value="">All Fleets</option><option value="0">Default</option>'.html_safe +
+                    options_from_collection_for_select(current_account().groups, 'id', 'name', @scheduled_report.report_params.blank? ? "" : @scheduled_report.report_params['group_id']),
+                    class: "form-input form-input--full-width form-select"
+                )
+          %>
+          <i class="fa fa-caret-down form-select__arrow" aria-hidden="true"></i>
+          <div class="new-scheduled-report__separators new-scheduled-report__separators--select">OR</div>
+          <%= select_tag(
+               'scheduled_report[report_params][device_id]',
+               '<option value="">Choose a Device</option>'.html_safe+
+                 options_from_collection_for_select(current_account().provisioned_devices,'id','name', @scheduled_report.report_params.blank? ? nil : @scheduled_report.report_params['device_id'].to_i),
+                 class: "form-input form-input--full-width form-select"
+                )
+          %>
+          <i class="fa fa-caret-down form-select__arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row form-row--flex form__row">
+      <div class="form-row form-row--inline">
+        <%= f.label :report_name, 'Report Span', class: 'form-label form-label--title' %>
+        <div class="form-select-wrapper form__input">
+          <%= f.select(:report_span_units, report_span_options(@scheduled_report), { selected: report_span_selected_option(@scheduled_report) }, { class: "form-input form-input--full-width form-select" } ) %>
+          <i class="fa fa-caret-down form-select__arrow" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <div class="form-row form-row--inline form-checkbox">
+        <%= f.check_box :recur %>
+        <%= f.label :report_type, 'Repeat?', class: 'form-label form-label--title' %>
+        <div id="recur_interval" class="<%= 'hide' unless @scheduled_report.recur? %> new-scheduled-report__hidden-field">
+          <%= f.label :report_name, 'Every', class: 'form-label form-label--title' %>
+          <%= f.select(:recur_interval, ScheduledReport::RECUR_INTERVALS, {}, { class: "form-input form-select new-scheduled-report__hidden-field__select" } ) %>
+          <i class="fa fa-caret-down form-select__arrow" aria-hidden="true"></i>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="form-row form-row--flex form__row">
+      <div class="form-row form-row--inline form-row--actions">
+        <%= f.submit 'Save', class: 'button button--primary button--large button--inline button--right' %>
+      </div>
+    </div>
+<% end %>
+
+<%= javascript_include_tag 'scheduled_reports' %>

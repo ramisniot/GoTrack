@@ -1,0 +1,11 @@
+<%= javascript_tag do %>
+    var frm_index = <%= frm_index %>;
+
+    <% @rg_readings.each do |reading| %>
+          readings.push(<%= raw(reading_js(reading, show_direction, show_phone_number)) %>);
+    <% end %>
+
+    $(function(){
+        load_rgeo_code();
+    });
+<% end %>

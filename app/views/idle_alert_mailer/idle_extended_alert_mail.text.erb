@@ -1,0 +1,2 @@
+Dear <%= @user.full_name %>,
+Idling Alert for device `<%= @device.name %>` exceeding <%= @device.idle_threshold / 1.minutes %> min on <%= @idle_event.started_at.in_time_zone(@user.time_zone) %> at <%= @reading.location ? @reading.location.full_address : 'Unknown'%>

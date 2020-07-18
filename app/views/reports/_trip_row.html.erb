@@ -1,0 +1,37 @@
+<% if next_start.nil? or trip.reading_stop %>
+    <% if trip.trip_legs && trip.trip_legs.size > 1 #don't display the legs if there's only one of them %>
+        <% last_leg_start, leg = nil %>
+        <% for next_leg in trip.trip_legs %>
+            <% if leg %>
+                <%= render partial: 'trip_leg_row', locals: { leg: leg, last_leg_start: last_leg_start, next_leg_start: next_leg.reading_start.recorded_at } %>
+                <% last_leg_start = leg.reading_start.recorded_at %>
+            <% end %>
+            <% leg = next_leg %>
+        <% end %>
+        <% if leg %>
+            <%= render partial: 'trip_leg_row', locals: { leg: leg, last_leg_start: last_leg_start, next_leg_start: leg.reading_stop.recorded_at } %>
+        <% end %>
+    <% end %>
+    <tr class="trip_event <%= cycle('dark-row', 'light-row') %>" id="row<%= trip.id %>">
+      <td><a href="/reports/trip_detail/<%= trip.id %>" style="font-size:11px;">trip details</a></td>
+      <td nowrap><%= standard_date(trip.start_reading.recorded_at,last_start) %></td>
+      <td nowrap><%= standard_time(trip.start_reading.recorded_at) %></td>
+      <td><%= standard_location(trip.device,trip.start_reading) %></td>
+      <%= javascript_tag do %>
+          updateReadingForTrip(<%= trip.start_reading_id %>, true, false);
+      <% end %>
+      <% if trip.end_reading %>
+          <td><%= standard_duration(trip.duration) %></td>
+          <td><%= sprintf('%2.1f',trip.distance) %></td>
+          <td><%= standard_location(trip.device, trip.end_reading) %></td>
+          <%= javascript_tag do %>
+              updateReadingForTrip(<%= trip.end_reading_id %>, false, true);
+          <% end %>
+          <td nowrap><%= standard_time(trip.end_reading.recorded_at) %></td>
+          <td><%= standard_duration(trip.idle/60) %></td>
+          <td><% if next_start %><%= standard_duration((next_start - trip.end_reading.recorded_at) / 60 ) %><% else %>&nbsp;<% end %></td>
+      <% else %>
+          <td colspan="6"><strong>In progress... <%= next_start.to_s %></strong></td>
+      <% end %>
+    </tr>
+<% end %>

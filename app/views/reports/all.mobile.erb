@@ -1,0 +1,85 @@
+<% content_for :navbar do %>
+  <ul>
+    <li><%= link_to 'Home',
+                    {:controller => :home, :action => :locations, :format => :mobile},
+                    'data-icon' => 'home',
+                    'data-ajax' => 'false'%></li>
+    <li><%= link_to 'Map Report',
+                    {:controller => :reports, :action => :all, :id => params[:id], :start_date => params[:start_date], :report_format => 'map', :format => :mobile},
+                    :class => "#{params[:report_format] == 'map' ? 'ui-btn-active' : ''}",
+                    'data-icon' => 'search',
+                    'data-ajax' => 'false' %></li>
+    <li><%= link_to 'Table Report',
+                    {:controller => :reports, :action => :all, :id => params[:id], :start_date => params[:start_date], :report_format => 'table', :format => :mobile},
+                    :class => "#{params[:report_format] == 'table' ? 'ui-btn-active' : ''}",
+                    'data-icon' => 'grid',
+                    'data-ajax' => 'false'%></li>
+  </ul>
+<% end %>
+
+<div id='selectors'>
+  <%= render partial: 'report_header' %>
+</div>
+
+<% if params[:report_format] == 'table' %>
+
+  <!-- render table reports -->
+  <%= render partial: 'table_report' %>
+
+<% else %>
+
+  <!-- render map reports and it's javascripts -->
+  <%= render partial: 'map_and_toggler', :locals => {:with_toggler => false} %>
+
+  <% content_for :javascript_include do %>
+    <%= javascript_tag do %>
+
+      <!-- load readings by javascript -->
+      <% for reading in @readings %>
+        <% if reading.short_address !=', ' %>
+          readings.push({id: <%= reading.id %>,
+                         lat: <%= reading.latitude %>,
+                         speed: <%= reading.speed %>,
+                         geofence: "<%= escape_javascript reading.fence_description %>",
+                         lng: <%= reading.longitude%>,
+                         address: '<%= escape_javascript reading.short_address %>',
+                         device_phone_number: '<%= escape_javascript reading.device.phone_number %>',
+                         direction: <%= reading.direction %>,
+                         dt: '<%= standard_date_and_time(reading.recorded_at) %>',
+                         note: '<%= escape_javascript reading.note %>',
+                         event: '<%= reading.event_type %>'});
+        <% end %>
+      <% end %>
+
+      <!-- load map by javascript -->
+      $('#page').on('pageshow', function(){
+        load();
+        google.maps.event.addDomListenerOnce(gmap, 'idle', zoomToReadingsBounds);
+
+        // window height - (nabvar - selectors -  map paddings)
+        // or 350px min-eight
+        var mapHeight = Math.max(window.innerHeight - (120 + 64 + 12), 350);
+        $('div#map').css('height', mapHeight);
+      });
+
+    <% end %>
+  <% end %>
+
+<% end %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

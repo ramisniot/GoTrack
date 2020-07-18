@@ -1,0 +1,6 @@
+<%= render partial: '/layouts/pagination', locals: { data: entities } %>
+<div class="reports-footer" id="reports-footer">
+  <% if @record_count > 0 %>
+    <div><%= display_result_count(params[:page].to_i, @actual_record_count, page_size)%></div>
+  <% end %>
+</div>

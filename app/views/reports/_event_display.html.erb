@@ -1,0 +1,38 @@
+<% all ||= false %>
+<% if reading.gateway_event_type.nil? %>
+  -
+<% elsif params[:action] == 'geofence' %>
+  <%= (reading.geofence_enter? || reading.geofence_exit?) ? reading.geofence_event_type.titleize : 'Within' %> <%= reading.geofence ? reading.geofence.name : 'geofence' %>
+<% elsif reading.gateway_event_type == 'normal' %>
+  <% if reading.geofence_event_type != '' %>
+    <%= (reading.geofence_enter? || reading.geofence_exit?) ? reading.geofence_event_type.titleize : 'Within' %>
+    <%= browser.device.mobile? ? geofence_name(reading) : (link_to geofence_name(reading), params.merge(action: :geofence), title: 'View location report')%>
+  <% else %>
+    Normal
+  <% end %>
+<% elsif reading.event_type == EventTypes::Stop && reading.speed == 0 %>
+  <% if all %>
+    Stop
+  <% else %>
+    <a href="/reports/stop/<%= @device.id %>?end_date=<%= reading.recorded_at.in_time_zone.to_date %>&start_date=<%= reading.recorded_at.in_time_zone.to_date %>" title="View stop report" >Stop</a>
+  <% end %>
+<% elsif reading.event_type == EventTypes::Idling %>
+  <% if all %>
+    Idle
+  <% else %>
+    <a href="/reports/idle/<%= @device.id %>" title="View idle report">Idle</a>
+  <% end %>
+<% elsif reading.event_type == EventTypes::Speed %>
+  <% if all || params[:action] == 'speeding' %>
+    <%= reading.show_event_type %>
+  <% else %>
+    <a href="/reports/speeding/<%= @device.id %>" title="View idle report"><%= reading.show_event_type %></a>
+  <% end %>
+<% else %>
+  <%= reading.display_event_type %>
+<% end %>
+
+<% if params[:action] != 'geofence' && reading.geofence_event_type.to_s != '' && reading.gateway_event_type != 'normal' %>
+  <%= (reading.geofence_enter? || reading.geofence_exit?) ? "while #{reading.geofence_event_type}ing " : 'within ' %>
+  <%= browser.device.mobile? ? geofence_name(reading) : (link_to geofence_name(reading), params.merge(action: :geofence), title: 'View location report')%>
+<% end %>

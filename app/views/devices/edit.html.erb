@@ -1,0 +1,74 @@
+<%= render partial:"/layouts/flash_message" %>
+
+<div class="page-title devices__title">
+  Editing <%= @device.name %>
+</div>
+
+<%= form_tag(device_path(@device), method: :put, class: 'devices-form') do %>
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+    <div class="form-row form-row--flex">
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">Name</div>
+        <input class="form-input form-input--full-width" type="text" name="device[name]" value="<%= h @device.name %>" maxlength="<%= Device::MAX_LENGTH[:name] %>" />
+      </div>
+
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">IMEI</div>
+      <% if current_user.is_super_admin? %>
+        <input class="form-input form-input--full-width" type="text" name="device[imei]" value="<%= @device.imei %>" maxlength="<%= Device::MAX_LENGTH[:imei] %>" />
+      <% else %>
+        <div class="form-input__read-only">
+          <%= @device.imei %>
+        </div>
+      <% end %>
+      </div>
+    </div>
+
+    <div class="form-row form-row--flex">
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">Driver's Phone Number</div>
+        <input class="form-input form-input--full-width" type="text" name="device[phone_number]" value="<%= h number_to_phone(@device.phone_number) %>" maxlength="<%= Device::MAX_LENGTH[:phone_number] %>" />
+      </div>
+      <div class="form-row form-row--inline form-row--center">
+        <div class="form-row__checkbox">
+          <input class="form-input form-input--full-width form-input--shrinked" name="device[notify_on_first_movement]" id="device_notify_on_first_movement" value="1"<%= ' checked="checked"' if @device.notify_on_first_movement? %> type="checkbox" />
+          <label class="form-label form-label--title" for="device_notify_on_first_movement">Notify on First Movement each day?</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row form-row--flex">
+    <% if @device.supports_telematics? %>
+      <div class="form-row form-row--inline">
+        <div class="form-label form-label--title">Idling Threshold</div>
+        <div class="form-select-wrapper form__input">
+          <%= select(:device, :idle_threshold, idle_alert_threshold_options(@device.idle_threshold), {}, class: "form-select form-input--full-width") %>
+          <i class="fa fa-caret-down form-select__arrow " aria-hidden="true"></i>
+        </div>
+      </div>
+    <% end %>
+      <div class="form-row form-row--inline form-row--center">
+        <div class="form-row__checkbox">
+          <input class="form-input form-input--full-width form-input--shrinked" name="device[notify_on_gps_unit_power_events]" id="device_notify_on_gps_unit_power_events" value="1"<%= ' checked="checked"' if @device.notify_on_gps_unit_power_events? %> type="checkbox" />
+          <label class="form-label form-label--title" for="notify_on_gps_unit_power_events">Notify on GPS Unit Power Change?</label>
+        </div>
+      </div>
+    </div>
+
+    <% if @device.max_digital_sensors > 0 %>
+      <div>
+        <label class="form-label form-label--title" for="sensors">Sensors:</label>
+      </div>
+    <% end %>
+
+    <%= render partial: 'admin/devices/device_digital_sensor', locals: { device: @device, sensors: @device.sensors } %>
+
+    <div class="form-row form-row--flex">
+      <div class="form-row form-row--inline form-row--actions">
+        <input class="button button--primary button--large button--inline button--right" type="submit" value="Update" />
+        <%= link_to 'Cancel', { action: 'index' }, class: "button button--secondary button--inline button--right" %>
+      </div>
+  <% end %>
+    </div>
+
+    <input type="hidden" name="id" value="<%= @device.id %>" />

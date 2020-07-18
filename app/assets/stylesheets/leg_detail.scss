@@ -1,0 +1,37 @@
+@import "colors";
+@import "constants";
+@import "media_queries_breakpoints";
+
+.leg-detail {
+  &__search-bar {
+    background-color: $color-white !important;
+  }
+
+  &__form-fields {
+    margin-top: $base-spacing-unit / 2;
+    display: flex;
+    width: 90%;
+
+    @media #{$tablets} {
+      width: 80%;
+    }
+  }
+
+  &__form-field {
+    margin-left: 0px !important;
+  }
+
+  &__label {
+    font-weight: bold;
+    font-size: 12px !important;
+  }
+
+  &__actions {
+    margin-right: 0px !important;
+    width: 10%;
+
+    @media #{$tablets} {
+      width: 20%;
+    }
+  }
+}

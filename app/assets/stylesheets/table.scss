@@ -1,0 +1,117 @@
+@import "colors";
+@import "media_queries_breakpoints";
+
+.table-wrapper {
+  overflow-x: scroll;
+}
+
+.panel_table {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border-collapse: collapse;
+
+  &__header {
+    background-color: $color-havelock-blue;
+    color: $color-white;
+    font-size: 12px;
+    padding: 5px;
+  }
+
+  thead > tr {
+    background-color: $color-white;
+
+    th {
+      font-weight: bold;
+    }
+  }
+
+  tbody > tr:nth-of-type(even) {
+    background-color: $color-white;
+  }
+
+  tbody > tr:nth-of-type(odd) {
+    background-color: $color-pearl;
+  }
+
+  tbody > tr.selected-row {
+    background-color: $color-cream-yellow;
+  }
+
+  tfoot tr th {
+    text-align: right;
+  }
+
+  th {
+    color: black;
+    text-align: left;
+    padding: 10px 15px;
+  }
+
+  td {
+    max-width: 300px;
+    padding: 10px;
+
+    @media #{$smartphones} {
+      max-width: 120px;
+    }
+  }
+
+  a {
+    text-decoration: none;
+    color: $color-havelock-blue;
+  }
+
+  &--flexible {
+    table-layout: auto;
+    line-height: 16px;
+
+    th, td {
+      padding: 10px;
+    }
+  }
+}
+
+.table-actions {
+  margin: 0 auto;
+
+  & > a:not(:last-child) {
+    margin-right: 15px;
+
+    @media #{$tablets-portrait} {
+      margin-right: 10px;
+    }
+  }
+}
+
+.devices-panel-table {
+  min-width: 1150px;
+}
+
+.table-faded-red-cell {
+  background-color: $color-deep-blush-red;
+}
+
+.light-row {
+  background-color: $color-white;
+}
+
+.dark-row {
+  background-color: $color-pearl;
+}
+
+.selected-row {
+  background-color: $color-cream-yellow;
+}
+
+.default-row {
+  background-color: $color-apple-green;
+}
+
+.table-limit-width {
+  max-width: 150px !important;
+
+  @media #{$smartphones} {
+    max-width: 80px !important;
+  }
+}

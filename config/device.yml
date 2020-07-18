@@ -1,0 +1,91 @@
+device_type_defaults: &device_type_defaults
+  enabled: true
+  label: '(none)'
+  identifier_label: 'IMEI'
+  max_digital_sensors: 0
+  network: gsm_3g
+  power: wired
+  speed_deadband: 3
+  supports_ignition: true
+  supports_on_device_activation: false
+  supports_on_network_activation: false
+  supports_on_device_geofences: false
+  supports_motion: false
+  supports_speed: true
+  supports_speed_threshold: false
+  supports_locate_now: false
+  supports_track_now: false
+  supports_panic: false
+  supports_vehicle_disable: false
+  supports_digital_sensors: false
+  supports_tank_level: false
+  supports_telematics: true
+  supports_temperature: false
+  supports_battery_level: false
+  suspect_ignition: false
+  battery_level_type: standard
+  battery_level_units: volts
+  battery_level_threshold: 10.8
+  compute_battery_usage: false
+  expected_readings_per_battery: ~
+common: &default_settings
+  gateways:
+    calamp:
+      enabled: true
+      label: 'Calamp Gateway'
+      database: calamp
+      gateway_defaults: &calamp_defaults
+        <<: *device_type_defaults
+      default_device_type: lmu3030
+      device_types:
+        lmu3030:
+          <<: *calamp_defaults
+          label: 'LMU-3030'
+          power: obd
+        lmu3035:
+          <<: *calamp_defaults
+          label: 'LMU-3035'
+          power: obd
+          suspect_ignition: true
+        lmu2600:
+          <<: *calamp_defaults
+          label: 'LMU-2600'
+          network: gsm_3g
+        lmu2630:
+          <<: *calamp_defaults
+          label: 'LMU-2630'
+          supports_digital_sensors: true
+          max_digital_sensors: 2
+        ttu720:
+          <<: *calamp_defaults
+          label: 'TTU-720'
+          power: battery
+          supports_motion: true
+          supports_telematics: false
+          battery_level_units: percent
+          battery_level_threshold: 20
+        ttu2830:
+          <<: *calamp_defaults
+          label: 'TTU-2830'
+          door_unlock_index: 2
+          supports_on_device_activation: true
+          supports_on_device_geofences: true
+          supports_speed_threshold: true
+          supports_digital_sensors: true
+          max_digital_sensors: 2
+          internal_battery_level_units: volts
+          internal_battery_level_threshold: 1.11
+development:
+  <<: *default_settings
+
+dev:
+  <<: *default_settings
+
+test:
+  <<: *default_settings
+
+staging:
+  <<: *default_settings
+
+production:
+  <<: *default_settings

@@ -1,0 +1,31 @@
+<% if request.server_name.is_a? String %>
+	<% if request.server_name.index("gotrack.com") %>
+	  <script type="text/javascript">
+	    var _gauges = _gauges || [];
+	    (function() {
+	      var t   = document.createElement('script');
+	      t.type  = 'text/javascript';
+	      t.async = true;
+	      t.id    = 'gauges-tracker';
+	      t.setAttribute('data-site-id', '4f2d2de7844d520610000018');
+	      t.src = '//secure.gaug.es/track.js';
+	      var s = document.getElementsByTagName('script')[0];
+	      s.parentNode.insertBefore(t, s);
+	    })();
+	  </script>
+	<% elsif request.server_name.index("mrpbx.com") %>
+	  <script type="text/javascript">
+	    var _gauges = _gauges || [];
+	    (function() {
+	      var t   = document.createElement('script');
+	      t.type  = 'text/javascript';
+	      t.async = true;
+	      t.id    = 'gauges-tracker';
+	      t.setAttribute('data-site-id', '4f2d2f1dcb25bc2f34000016');
+	      t.src = '//secure.gaug.es/track.js';
+	      var s = document.getElementsByTagName('script')[0];
+	      s.parentNode.insertBefore(t, s);
+	    })();
+	  </script>
+	<% end %>
+<% end %>

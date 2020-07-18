@@ -1,0 +1,98 @@
+<div class="container">
+  <div id="top_head" class="top-head">
+    <% if !params[:device_search] %>
+      <div class="page-title devices__title">Displaying <%= @devices.size %> device<% if @devices.size != 1 %>s<% end %></div>
+    <% else%>
+      <div class="page-title devices__title">Displaying <%if @devices.nil?%> 0 devices<%else%><%= @devices.size %> device<% if @devices.size != 1 %>s<% end %><%end%>  that match "<%= params[:device_search] %>"</div>
+    <% end %>
+
+    <div class="search-bar">
+      <div class='search-bar__form__filter'>
+        <label class='search-bar__label'>For</label>
+        <form role="form" class='form-select-wrapper'>
+          <select id="type1" onchange="document.location.href='/devices?group_id=' + this.options[this.selectedIndex].value;" class="form-select width--full">
+            <option value="all">All Fleets</option>
+            <% for group in @groups %>
+              <option value="<%= group.id %>" <% if current_group_value.to_i == group.id %>selected class="default-row"<% end %>><%= group.name %></option>
+            <% end %>
+            <option <% if current_group_value == "default" %>selected<% end %> value="default">Default</option>
+          </select>
+          <i class="fa fa-caret-down form-select__arrow search-bar__arrow" aria-hidden="true"></i>
+        </form>
+      </div>
+      <div class="search-bar__search-box-container">
+        <form action="/devices/search_devices" name="device_search_form" method="post">
+          <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+            <label class="search-bar__label">Device Name</label>
+            <input type="text" name="device_search" class="devices-search-bar__search-box" value="<%= params[:device_search] %>" placeholder="Device Name" />
+          <div class="devices-search-bar__botton-container">
+            <input type="submit" class="button button--primary button--large devices-search-bar__button" value="Search" />
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <%= render partial: "/layouts/flash_message" %>
+
+  <% if @devices.nil? || @devices.empty? %>
+    <div class="devices__empty-state">
+      <%= render partial: '/shared/search_empty_state', locals: { text: 'No devices found.' } %>
+    </div>
+  <% else %>
+    <table class="panel_table devices__table">
+      <thead>
+        <tr>
+          <th colspan="3">Name</th>
+          <th colspan="3">IMEI</th>
+          <th colspan="3">Fleet</th>
+          <th colspan="3">Locations</th>
+          <th colspan="3">Driver's Phone Number</th>
+          <th colspan="2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%if !@devices.nil? && !@devices.empty?%>
+          <% for device in @devices %>
+            <tr>
+              <td colspan="3">
+                <%= link_to device.name, action_reports_path('all', device.id), title: 'View reports for this device' %>
+              </td>
+              <td colspan="3"><%= device.imei %></td>
+              <td colspan="3">
+                <% if current_user.is_read_only? %><%= (device.group ? device.group.name : 'Default') %>
+                <% else %>
+                  <% unless device.group.nil? %>
+                    <%= link_to(device.group.name, edit_group_path(device.group), title: 'Edit this fleet') %>
+                  <% else %>
+                    Default
+                  <% end %>
+                <% end %>
+              </td>
+              <td colspan="3">
+                <% if device.geofences.size == 0 %>
+                  <% unless current_user.is_read_only? %><%= link_to('Add', new_geofence_path(device_id: device.id)) %> <% end %>
+                <% else %>
+                  <%= link_to("#{device.geofences.size} total", for_device_geofences_path(device_id: device.id)) %>
+                <% end %>
+              </td>
+              <td class="phone-number" colspan="3"><%= h number_to_phone(device.phone_number) %></td>
+              <td colspan="2">
+                <% unless current_user.is_read_only? %>
+                  <div class="table-actions">
+                    <%= link_to edit_device_path(device), title: 'Edit this device' do %>
+                      <i class="fa fa-pencil link-icon"></i>
+                    <% end %>
+                    <%= link_to device_path(device.id), method: :delete, title: 'Delete this device', data: { confirm: 'Are you sure you want to delete this device?' } do %>
+                      <i class="fa fa-trash link-icon"></i>
+                    <% end %>
+                  </div>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>

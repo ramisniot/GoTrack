@@ -1,0 +1,82 @@
+@import "colors";
+@import "constants";
+@import "media_queries_breakpoints";
+
+.overview {
+  display: block;
+  width: 95%;
+  margin-bottom: 60px;
+  height: 100%;
+
+  @media #{$smartphones} {
+    width: 100%;
+    margin: 0px;
+  }
+}
+
+.overview-updating {
+  margin-top: 5px;
+  position: absolute;
+}
+
+.overview-devices {
+  margin-top: $base-spacing-unit;
+
+  &__title {
+    font-size: 20px;
+    margin: 2px;
+  }
+
+  &__table {
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+
+  &__empty {
+    border-radius: 4px;
+    padding-left: 4px;
+    padding-top: 15px;
+    height: 40px;
+    margin-top: 20px;
+    background-color: $color-cream-yellow;
+    font-weight: bold;
+  }
+}
+
+.overview-group-header {
+  background-color: $color-atomic-tangerine-orange;
+  width: 100%;
+  padding: 1px 0 1px 30px !important;
+}
+
+.overview-group-name {
+  display: flex;
+  margin-bottom: 0px;
+  font-weight: bold;
+  line-height: 28px;
+
+  &__icon {
+    height: 25px;
+    width: 20px;
+    padding-top: 2px;
+    padding-right: 5px;
+  }
+}
+
+.overview-search-bar {
+
+  &__outer-form {
+    width: 75%;
+    margin-left: 10px;
+  }
+
+  &__address {
+    margin: 2px 10px 0px 0px;
+  }
+}
+
+.overview-mobile-map-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 91% !important;
+}

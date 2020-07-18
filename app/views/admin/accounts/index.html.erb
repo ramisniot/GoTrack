@@ -1,0 +1,76 @@
+<div class="page-header">
+  <div class="page-header__title-container">
+    <div class="admin-title">
+        <%= page_entries(@accounts) %>
+    </div>
+  </div>
+  <div class="page-header__action">
+    <%= link_to('Add New Account', new_admin_account_path, title: 'Create a new account', class: "button button--primary button--large" )%>
+  </div>
+</div>
+
+<%= render partial: '/layouts/admin/search' %>
+<%= render partial: '/layouts/flash_message' %>
+
+<% if @accounts.empty? %>
+  <%= render partial: '/shared/search_empty_state', locals: { text: 'No accounts found.' } %>
+<% else %>
+  <table class="panel_table">
+    <thead>
+      <tr>
+        <th colspan="2">Company</th>
+        <th colspan="2">Subdomain</th>
+        <th colspan="2">Contact Name</th>
+        <th colspan="2">Contact Email</th>
+        <th colspan="2">Contact Phone</th>
+        <th colspan="1">Users</th>
+        <th colspan="1">Devices</th>
+        <th colspan="1">Options</th>
+        <th colspan="3">Created</th>
+        <th colspan="2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% total_users,total_devices = 0,0 %>
+      <% @accounts.each do |account| %>
+        <tr>
+          <td colspan="2"><%= link_to account.company, home_act_as_if_account_path(new_account_id: account.id), :target => '_blank' %></td>
+          <td colspan="2"><%= account.subdomain %></td>
+          <td colspan="2"><%= account.contact_name %></td>
+          <td colspan="2"><%= account.contact_email %></td>
+          <td colspan="2"><%= account.contact_phone %></td>
+          <td colspan="1">
+            <%= link_to admin_users_path(search: {account_id_eq: account.id}) do %>
+              <%= total_users += (user_count = account.users.count); user_count %>
+            <% end %>
+          </td>
+          <td colspan="1">
+            <%= link_to admin_devices_path(search: {account_id_eq: account.id}) do %>
+              <%= total_devices += (device_count = account.devices.count); device_count %>
+            <% end %>
+          </td>
+          <td colspan="1"><%= encode_account_options(account) %></td>
+          <td colspan="3"><%= display_local_dt account.created_at %></td>
+          <td colspan="2">
+            <div class="table-actions">
+              <%= link_to edit_admin_account_path(account.id), title: 'Edit Account' do %>
+                <i class="fa fa-pencil link-icon" aria-hidden="true"></i>
+              <% end %>
+              <%= link_to admin_account_path(account.id), title: 'Delete Account', method: 'delete', data: { confirm: 'Are you sure?' } do %>
+                <i class="fa fa-trash link-icon"></i>
+              <% end %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th colspan="10">Totals:</th>
+        <td><%= total_users %></td>
+        <td><%= total_devices %></td>
+      </tr>
+    </tfoot>
+  </table>
+  <%= render partial: '/layouts/pagination', locals: { data: @accounts } %>
+<% end %>

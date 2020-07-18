@@ -1,0 +1,81 @@
+dennis:
+  id: 1
+  first_name: dennis
+  last_name: baldwin
+  email: dennis@gotrackinc.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'testing') %>
+  account_id: 1
+  created_at: <%= 1.day.ago.to_s :db %>
+  is_master: true
+  enotify: 1
+  roles: <%= User.bitmask_for_roles(:superadmin) %>
+
+nick:
+  id: 2
+  first_name: nick
+  last_name: palmby
+  email: nick@gotrackinc.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'testing') %>
+  account_id: 2
+  created_at: <%= 2.days.ago.to_s :db %>
+  is_master: true
+  enotify: 0
+  roles: <%= User.bitmask_for_roles(:admin) %>
+
+ken:
+  id: 3
+  first_name: ken
+  last_name: kowalski
+  email: ken@gotrackinc.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'testing') %>
+  account_id: 3
+  created_at: <%= 3.days.ago.to_s :db %>
+  is_master: true
+  enotify: 0
+  roles: <%= User.bitmask_for_roles(:admin) %>
+
+byron:
+  id: 4
+  first_name: byron
+  last_name: appelt
+  email: byron@gotrackinc.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'testing') %>
+  account_id: 4
+  created_at: <%= 4.days.ago.to_s :db %>
+  is_master: true
+  enotify: 0
+  roles: <%= User.bitmask_for_roles(:admin) %>
+
+demo:
+  id: 5
+  first_name: demo
+  last_name: user
+  email: demouser@gotrackinc.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'testing') %>
+  account_id: 1
+  is_master: false
+  enotify: 0
+  created_at: <%= 1.day.ago.to_s :db %>
+  roles: <%= User.bitmask_for_roles(:read_write) %>
+
+newcustomer:
+  id: 7
+  first_name: new
+  last_name: customer
+  email: new@gotrackinc.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'testing') %>
+  account_id: 5
+  created_at: <%= Time.now.to_s :db %>
+  enotify: 0
+  roles: <%= User.bitmask_for_roles(:view_only) %>
+
+newcustomer2:
+  id: 8
+  first_name: staging
+  last_name: user
+  email: staging@gotrackinc.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'staging') %>
+  account_id: 6
+  created_at: <%= Time.now.to_s :db %>
+  enotify: 0
+  roles: <%= User.bitmask_for_roles(:read_write) %>

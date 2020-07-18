@@ -1,0 +1,18 @@
+<%#TODO:  decide if this template should get tossed out the window %>
+<!-- 
+<%# if current_user.is_super_admin? && current_user.accessible_account_ids.size > 1 %>
+    <strong>View different account: </strong>
+    <%#= form_tag :home_act_as_if_account, {id: 'act-as-if-account-form', class: 'act-as-if-account-form'} do %>
+        <select id="current-account-id" >
+          <%# current_account_id = current_account.id.blank? ? current_user.account_id : current_account.id.to_i %>
+          <%# Account.where(id: current_user.accessible_account_ids).each do |account| %>
+              <option value="<%#= account.id %>" <%#= 'selected="selected"' if current_account_id == account.id %>>
+                <%#= account.company %>
+              </option>
+          <%#  end %>
+        </select>
+        <%#= hidden_field_tag :redirect_to, path %>
+        <%#= hidden_field_tag :new_account_id, current_account.id %>
+    <%# end %>
+<%# end %>
+-->

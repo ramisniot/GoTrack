@@ -1,0 +1,53 @@
+<%= render partial: 'report_header' %>
+<div class="reports-content">
+  <div id="left_panel" class="reports-content__left">
+    <% if !@idle_events.empty? %>
+
+      <table class="panel_table panel_table--flexible">
+        <tr>
+          <th>Location</th>
+          <th>Idle Duration</th>
+          <th>Started</th>
+        </tr>
+        <% count = 0 %>
+        <% previous_datetime = nil %>
+        <% for idle_event in @idle_events %>
+          <tr id="row<%= idle_event.reading.id %>">
+            <td>
+              <%= standard_location(@device,idle_event.reading) %>
+              <a href="javascript:centerMapOnReading(<%= idle_event.reading.id %>);highlightRow(<%= idle_event.reading.id %>)" title="Center map on this location" >(map it)</a>
+            </td>
+            <td>
+              <% if idle_event.duration.nil? && count == 0 %>
+                <%
+                  start_time = @idle_events[0].started_at.to_i
+                  end_time = Time.now.to_i
+                  duration = (end_time-start_time) / 60
+                %>
+                <strong>In progress:</strong> <%= standard_duration(duration) %>
+              <% elsif idle_event.duration.nil? %>
+                Unknown
+              <% else %>
+                <%= standard_duration(idle_event.duration / 60) %>
+              <% end %>
+            </td>
+            <td>
+              <%= standard_date_and_time(idle_event.started_at, previous_datetime) %>
+            </td>
+          </tr>
+          <% previous_datetime = idle_event.started_at %>
+          <% count = count + 1%>
+        <% end %>
+      </table>
+
+    <% else %>
+      <%= render partial: 'empty_state', locals: { message: 'No idle events found.' } %>
+    <% end %>
+    </div>
+
+  <%= render partial: 'map_and_toggler', locals: { with_toggler: true } %>
+</div>
+
+<%= render partial: '/shared/load_rgeo', locals: { frm_index: false, show_direction: false, show_phone_number: false } %>
+
+<%= render partial: 'report_footer', locals: { entities: @idle_events } %>

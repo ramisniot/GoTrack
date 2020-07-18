@@ -1,0 +1,17 @@
+<div class="page-header">
+  <div class="page-header__title-container">
+    <div class="page-title">Create New Device</div>
+  </div>
+</div>
+
+<%= render partial: '/layouts/flash_message' %>
+
+<%= form_for(@device, url: admin_devices_path, html: { class: 'form', id: 'device-form', data: { id: '', url: '/admin/devices/digital_sensor_form' } }) do %>
+  <%= render partial: 'device_form' %>
+<% end %>
+
+<script language="javascript" type="text/javascript">
+  window.onload = function() {
+    document.getElementById("name").focus();
+  }
+</script>

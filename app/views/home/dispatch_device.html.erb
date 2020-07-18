@@ -1,0 +1,22 @@
+<script>
+	var frm_index=true;
+</script>
+<div class="overview-devices">
+  <%= render partial: 'device_summary_header', locals: { sub_heading: nil } %>
+  <div class="overview-devices__table">
+  	<table class="panel_table">
+  		<tr>
+  			<th>Name</th>
+  			<th>Last Location</th>
+  			<th>Last Status</th>
+  			<th>Last Report</th>
+  		</tr>
+  		<%= render partial: 'group_rows', locals: { column_span: 4, callback: 'show_device_location' } %>
+  	</table>
+  </div>
+</div>
+
+<script type="text/javascript">
+	window.dispatchResult = <%= @geocoding_result.ll.split(/,/).to_json.html_safe %>;
+	window.dispatchAddress = <%= params[:address].to_json.html_safe %>;
+</script>
