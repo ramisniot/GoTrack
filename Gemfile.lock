@@ -185,7 +185,7 @@ GEM
     puma (3.8.2)
     quiet_assets (1.1.0)
       railties (>= 3.1, < 5.0)
-    rack (1.6.10)
+    rack (1.6.13)
     rack-protection (2.0.0)
       rack
     rack-test (0.6.3)
